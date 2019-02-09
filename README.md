@@ -1,0 +1,2 @@
+# shamebot
+for shame
