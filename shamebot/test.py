@@ -5,7 +5,7 @@ def test_OW_class_init(arg1, arg2):
     test = temp.Overwatch(arg1, arg2)
     print("Battlenet name: " , test.bnet_name)
     print("Hero:            %s " % test.hero)
-    print("Hero Value:     %d " % test.hero_val)
+    print("Hero Value:      %d " % test.hero_val)
 
 art.printart()
 
