@@ -1,6 +1,7 @@
 
-class InvalidHeroName(Exception):
+class InvalidHeroNameError(Exception):
     """Raise when hero name passed not found in dictionary"""
-
-class EmptyAccountString(Exception):
+    type = "InvalidHeroNameError"
+class EmptyAccountStringError(Exception):
     """Raise account string is empty"""
+    type = "EmptyAccountStringError"
