@@ -17,24 +17,23 @@ class Overwatch:
     def __init__(self, acct_full=None, hero=None):
         try:
             if acct_full is None:
-                raise errors.EmptyAccountString
+                raise errors.EmptyAccountStringError
             else:
                 self.bnet_name = str(acct_full)
 
             if hero is None:
                 self.hero = "ALL HEROES"
             elif hero not in owc.char_options:
-                raise errors.InvalidHeroName
+                raise errors.InvalidHeroNameError
             else:
                 self.hero = str(hero)
                 self.hero_val = owc.char_options[hero]
 
-        except errors.InvalidHeroName:
-            print("Hero name invlaid -- Use proper case (ex: Ana, Roadhog, etc)")
-            print()
-        except errors.EmptyAccountString:
-            print("Account string cannot be empty")
-            print()
+        except errors.InvalidHeroNameError:
+            raise errors.InvalidHeroNameError("Hero name invlaid -- Use proper case (ex: Ana, Roadhog, etc)")
+
+        except errors.EmptyAccountStringError:
+            raise errors.EmptyAccountStringError("Empty Account String\n")
 
         acc_url = owc.BASE_URL + self.bnet_name
         req = requests.get(acc_url)
