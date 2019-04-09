@@ -8,11 +8,11 @@ class ColorPrint:
 
     @staticmethod
     def print_fail(message, prefix="", end = '\n'):
-        sys.stderr.write('\x1b[1;31m' + prefix + message.strip() + '\x1b[0m' + end)
+        sys.stderr.write('\x1b[0;31m' + prefix + message.strip() + '\x1b[0m' + end)
 
     @staticmethod
     def print_pass(message, prefix="", end = '\n'):
-        sys.stdout.write('\x1b[1;32m' + prefix + message.strip() + '\x1b[0m' + end)
+        sys.stdout.write('\x1b[6;32m' + prefix + message.strip() + '\x1b[0m' + end)
 
     @staticmethod
     def print_warn(message, prefix="", end = '\n'):
@@ -20,7 +20,7 @@ class ColorPrint:
 
     @staticmethod
     def print_info(message, prefix="", end = '\n'):
-        sys.stdout.write('\x1b[1;34m' + prefix + message.strip() + '\x1b[0m' + end)
+        sys.stdout.write('\x1b[6;34m' + prefix + message.strip() + '\x1b[0m' + end)
 
     @staticmethod
     def print_bold(message, prefix="", end = '\n'):
