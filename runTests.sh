@@ -1,5 +1,6 @@
 #!/bin/bash
 
+VERSION=$(python --version)
+#secho $VERSION 
 
-
-python shamebot/tests/test.py
+python3.7 shamebot/tests/testsuite.py
