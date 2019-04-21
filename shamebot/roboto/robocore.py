@@ -1,20 +1,82 @@
 import discord
-import certifi
+import logging
+from logging.handlers import RotatingFileHandler
+import flame
 
-certifi.where()
-client = discord.Client()
+''' 
+	Set up logging 
 
-@client.event
-async def on_ready():
-    print('We have logged in as {0.user}'.format(client))
+'''
 
-@client.event
-async def on_message(message):
-    if message.author == client.user:
-        return
+#Discord logformat is for verbose discord logging that exists in discord module
+DiscordlogFormatter = logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s')
 
-    if message.content.startswith('$hello'):
-        await message.channel.send('Hello!')
+#This splices into the globalized logger object
+DISCORDlogger = logging.getLogger('discord')
+DISCORDlogger.setLevel(logging.DEBUG)
+
+# Add filehandler 
+discordFileHandler = RotatingFileHandler(filename='./logs/discord.log', encoding='utf-8', mode='w', maxBytes=10*1024*1024, backupCount=2)
+discordFileHandler.setFormatter(DiscordlogFormatter)
+DISCORDlogger.addHandler(discordFileHandler)
 
 
-client.run('NTY5MjI0NTgyNzQyMTQ3MTE4.XLt-Sg.fpPDW-F5TgrGMtc3daJJenRgnfU')
+
+#Shameful is our logger, less verbose, more focused on server interaction and code stability
+ShamefullogFormatter = logging.Formatter('%(asctime)s:%(name)s:%(levelname)s:[%(module)s:%(funcName)s]:  %(message)s')
+
+SHAMElogger = logging.getLogger(__name__)
+SHAMElogger.setLevel(logging.DEBUG)
+
+# Add filehandler 
+shameFileHandler = RotatingFileHandler(filename='./logs/shamebot.log', encoding='utf-8', mode='a', maxBytes=5*1024, backupCount=2)
+shameFileHandler.setFormatter(ShamefullogFormatter)
+SHAMElogger.addHandler(shameFileHandler)
+
+# Add Console handler
+consoleHandler = logging.StreamHandler()
+consoleHandler.setFormatter(ShamefullogFormatter)
+SHAMElogger.addHandler(consoleHandler)
+
+
+
+
+
+
+'''https://github.com/HBchevelle68/shamebot/issues
+	Begin shamebot 
+'''
+class Shamebot(discord.Client):
+	'''
+		@on_ready() - performed on initialization and login
+	'''
+	async def on_ready(self):
+		print('Hello! I am logging on discord now!')
+		print('I have logged in as {0.user}'.format(client))
+		SHAMElogger.info('Successful login {0.user}'.format(client))
+
+	
+	'''
+		@on_message() - Core message reaction 
+	'''
+	async def on_message(self, message):
+		if message.content.startswith('$'):
+			SHAMElogger.info('recieved %s from %s' % (message.content, message.author))
+		else:
+			return
+		
+		# Shamebot doesn't need to respond to itself :) 
+		if message.author == client.user:
+			return
+
+		if message.content.startswith('$hello'):
+			await message.channel.send('Hello %s!'% message.author)
+    	
+		elif message.content.startswith('$shamemedaddy'):
+			await message.channel.send(flame.JT)
+
+
+
+
+client = Shamebot()
+client.run('NTY5MjI0NTgyNzQyMTQ3MTE4.XLxoAg.k_zDvtdI8QppdTIqx8PpQA6qFDQ')
