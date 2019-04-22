@@ -1,7 +1,9 @@
 import discord
 import logging
 from logging.handlers import RotatingFileHandler
-import flame
+
+import roboflame
+import roboutils
 
 ''' 
 	Set up logging 
@@ -69,11 +71,14 @@ class Shamebot(discord.Client):
 		if message.author == client.user:
 			return
 
-		if message.content.startswith('$hello'):
+		if message.content.startswith('$help'):
+			await message.channel.send(roboutils.helpstr)
+
+		elif message.content.startswith('$hello'):
 			await message.channel.send('Hello %s!'% message.author)
     	
 		elif message.content.startswith('$shamemedaddy'):
-			await message.channel.send(flame.JT)
+			await message.channel.send(roboflame.JT)
 
 
 
