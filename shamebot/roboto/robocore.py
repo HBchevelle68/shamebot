@@ -1,7 +1,11 @@
 import discord
 import logging
+from sys import argv
 from logging.handlers import RotatingFileHandler
-import flame
+
+import roboflame
+import roboutils
+
 
 ''' 
 	Set up logging 
@@ -43,7 +47,7 @@ SHAMElogger.addHandler(consoleHandler)
 
 
 
-'''https://github.com/HBchevelle68/shamebot/issues
+'''
 	Begin shamebot 
 '''
 class Shamebot(discord.Client):
@@ -69,14 +73,17 @@ class Shamebot(discord.Client):
 		if message.author == client.user:
 			return
 
-		if message.content.startswith('$hello'):
+		if message.content.startswith('$help'):
+			await message.channel.send(roboutils.helpstr)
+
+		elif message.content.startswith('$hello'):
 			await message.channel.send('Hello %s!'% message.author)
     	
 		elif message.content.startswith('$shamemedaddy'):
-			await message.channel.send(flame.JT)
+			await message.channel.send(roboflame.JT)
 
 
 
-
-client = Shamebot()
-client.run('NTY5MjI0NTgyNzQyMTQ3MTE4.XLxoAg.k_zDvtdI8QppdTIqx8PpQA6qFDQ')
+if __name__ == "__main__":
+	client = Shamebot()
+	client.run(str(argv[1]))
