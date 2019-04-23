@@ -79,4 +79,4 @@ class Shamebot(discord.Client):
 
 
 client = Shamebot()
-client.run('NTY5MjI0NTgyNzQyMTQ3MTE4.XLxoAg.k_zDvtdI8QppdTIqx8PpQA6qFDQ')
+client.run('LOLOLOL bish pls')
