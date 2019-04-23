@@ -3,6 +3,7 @@ cmdlist = [
 '$help',
 '$hello',
 '$shamemedaddy'
+'$report'
 ]
 desclist = [
 'Displays this message',
@@ -10,13 +11,13 @@ desclist = [
 'A hardcoded shame'
 ]
 
+ISSUES ='''
+Found an issue you'd like to report? Go to
+https://github.com/HBchevelle68/shamebot/issues"
+'''
 helpstr = '''
 	Shamebot Interactive Commands
-	{:<36} {:>20}
-	{:<36} {:>20}
-	{:<21} {:>20}
-	'''.format(
-		cmdlist[0], desclist[0],
-		cmdlist[1], desclist[1],
-		cmdlist[2], desclist[2]
-		)
+	{:<}
+	{:<}
+	{:<} 
+	'''.format(cmdlist[0], cmdlist[1], cmdlist[2])
