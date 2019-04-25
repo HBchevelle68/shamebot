@@ -129,5 +129,10 @@ class Shamebot(discord.Client):
 
 if __name__ == "__main__":
 
+<<<<<<< HEAD
 	client = Shamebot()
 	client.run(str(argv[1]))
+=======
+client = Shamebot()
+client.run('LOLOLOL bish pls')
+>>>>>>> 8d75bba45e5328e948224859cd83ca9117ca0919
