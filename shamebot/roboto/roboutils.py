@@ -6,10 +6,14 @@ cmdlist = [
 '$bugreport',
 '$help',
 '$hello',
+'$gif',
 '$meme',
-'$shamemedaddy'
+'$shamemedaddy',
+'$version'
 ]
 
+
+VERSION='0.0.3'
 
 BUG ='''
 Found an bug you'd like to report? Go to
@@ -23,6 +27,9 @@ helpstr = '''
 	{:<}
 	{:<}
 	{:<}
-	'''.format(cmdlist[0], cmdlist[1], cmdlist[2], cmdlist[3], cmdlist[4])
+	{:<}
+	{:<}
+	'''.format(cmdlist[0], cmdlist[1], cmdlist[2], cmdlist[3], cmdlist[4],
+	 cmdlist[5], cmdlist[6])
 
 

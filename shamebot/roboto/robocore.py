@@ -1,5 +1,6 @@
 import discord
 import logging
+import random
 import signal
 import os
 from sys import argv
@@ -112,22 +113,31 @@ class Shamebot(discord.Client):
 
 		if message.content.startswith('$help'):
 			await message.channel.send(roboutils.helpstr)
+			self.statsOBJ.logCommandUsage('$help')
 		
 		elif message.content.startswith('$meme'):
-			await message.channel.send("", file=discord.File(self.memepool[0]))
+			await message.channel.send("", file=discord.File(random.choice(self.memepool)))
+			self.statsOBJ.logCommandUsage('$meme')
 
 		elif message.content.startswith('$gif'):
-			await message.channel.send("", file=discord.File(self.gifpool[0]))
+			await message.channel.send("", file=discord.File(random.choice(self.gifpool)))
+			self.statsOBJ.logCommandUsage('$gif')
 
 		elif message.content.startswith('$bugreport'):
 			await message.channel.send(roboutils.BUG)
-		
+			self.statsOBJ.logCommandUsage('$bugreport')
+
 		elif message.content.startswith('$shamemedaddy'):
 			await message.channel.send(roboflame.JT)
+			self.statsOBJ.logCommandUsage('$shamemedaddy')
 
 		elif message.content.startswith('$hello'):
 			await message.channel.send('Hello {.author}!'.format(message))
+			self.statsOBJ.logCommandUsage('$hello')
 
+		elif message.content.startswith('$version'):
+			await message.channel.send("I am currently on %s" % roboutils.VERSION)
+			self.statsOBJ.logCommandUsage('$version')
 	'''
 		@on_disconnect() - called on network disconnect, interrupt, etc 
 	'''

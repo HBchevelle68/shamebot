@@ -26,7 +26,7 @@ class RoboStats:
 
 	def statsToFile(self, Slogger):
 		Slogger.info("Writing stats to %s"% (self.statsfile)) 
-		with open(self.statsfile, "w") as f:
+		with open(self.statsfile, "a") as f:
 			for key,value in self.cmdstats.items():
 				f.write("%s::%d\n" % (key,value))
 				
