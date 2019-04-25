@@ -60,6 +60,7 @@ signal.signal(signal.SIGINT, sigint_handler)
 class Shamebot(discord.Client):
 
 	memepool = list()
+	gifpool = list()
 	statsOBJ = None
 	
 	'''
@@ -73,21 +74,28 @@ class Shamebot(discord.Client):
 
 		#load meme images
 		SHAMElogger.info("Loading meme images")
-		self.loadmemes()
+		self.loadimages()
 
 		#Get command lists
 		SHAMElogger.info('Successful login {0.user}'.format(client))
 
 	
-	def loadmemes(self):
+	def loadimages(self):
 		for root, dirs, files in os.walk(os.path.abspath("images/memes/")):
 			for file in files:
 				if file is None:
 					SHAMElogger.error("no memes found!")
-					return
+					break;
 				self.memepool.append(os.path.join(root, file))
 				SHAMElogger.info("Loaded meme %s" % self.memepool[-1]) 
 
+		for root, dirs, files in os.walk(os.path.abspath("images/gifs/")):
+			for file in files:
+				if file is None:
+					SHAMElogger.error("no gifs found!")
+					return
+				self.gifpool.append(os.path.join(root, file))
+				SHAMElogger.info("Loaded gif %s" % self.memepool[-1])
 
 	'''
 		@on_message() - Core message interaction & response 
@@ -107,6 +115,9 @@ class Shamebot(discord.Client):
 		
 		elif message.content.startswith('$meme'):
 			await message.channel.send("", file=discord.File(self.memepool[0]))
+
+		elif message.content.startswith('$gif'):
+			await message.channel.send("", file=discord.File(self.gifpool[0]))
 
 		elif message.content.startswith('$bugreport'):
 			await message.channel.send(roboutils.BUG)
@@ -128,11 +139,5 @@ class Shamebot(discord.Client):
 
 
 if __name__ == "__main__":
-
-<<<<<<< HEAD
 	client = Shamebot()
 	client.run(str(argv[1]))
-=======
-client = Shamebot()
-client.run('LOLOLOL bish pls')
->>>>>>> 8d75bba45e5328e948224859cd83ca9117ca0919

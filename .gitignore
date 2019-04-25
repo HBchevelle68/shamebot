@@ -1,3 +1,7 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
+
+shamebot/roboto/images/gifs/
+shamebot/roboto/images/memes/
+shamebot/roboto/logs/
