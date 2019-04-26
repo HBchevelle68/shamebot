@@ -11,7 +11,7 @@ if __name__ == '__main__':
 
 	ret = OWCT.OW_Class_test_1(testCore)
 	CP.print_warn("End OW Test 1 -- Testing Overwatch constructor", prefix="\n\n")
-	if ret != testCore.SUCCESS:
+	if testCore.failTracker > 0:
 		CP.print_fail("[FAIL] Some or all tests did not pass")
 
 	else:

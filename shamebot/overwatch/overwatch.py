@@ -11,26 +11,13 @@ from overwatch import errors
 class Overwatch:
 
     bnet_name = None
-    hero = None
-    hero_val = 0
 
-    def __init__(self, acct_full=None, hero=None):
+    def __init__(self, acct_full=None):
         try:
             if acct_full is None:
                 raise errors.EmptyAccountStringError
             else:
                 self.bnet_name = str(acct_full)
-
-            if hero is None:
-                self.hero = "ALL HEROES"
-            elif hero not in owc.char_options:
-                raise errors.InvalidHeroNameError
-            else:
-                self.hero = str(hero)
-                self.hero_val = owc.char_options[hero]
-
-        except errors.InvalidHeroNameError:
-            raise errors.InvalidHeroNameError("Hero name invlaid -- Use proper case (ex: Ana, Roadhog, etc)")
 
         except errors.EmptyAccountStringError:
             raise errors.EmptyAccountStringError("Empty Account String\n")
