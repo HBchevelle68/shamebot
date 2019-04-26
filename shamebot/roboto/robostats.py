@@ -29,4 +29,4 @@ class RoboStats:
 		with open(self.statsfile, "a") as f:
 			for key,value in self.cmdstats.items():
 				f.write("%s::%d\n" % (key,value))
-				
+			f.write("++++++++++")
