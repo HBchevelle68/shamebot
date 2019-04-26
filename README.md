@@ -1,7 +1,7 @@
 # shamebot
 for shame
 
-##Current Goal:
+## Current Goal:
 * Version 0.0.69
   * Heuristics
   * bot/OW lib integration
@@ -9,4 +9,4 @@ for shame
   * Deployment env set up (deployment not neccessary but should be at least pass functional testing 
 
 
-##Feature Requests:
+## Feature Requests:
