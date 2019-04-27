@@ -1,4 +1,7 @@
 import discord
+from discord.ext import commands
+from discord.ext.commands import Bot
+
 import logging
 import random
 import signal
@@ -10,6 +13,7 @@ import roboflame
 import roboutils
 from robostats import RoboStats
 
+bot = commands.Bot(command_prefix='$', case_insensitive=True)
 
 ''' 
 	Set up logging 
@@ -46,108 +50,133 @@ SHAMElogger.addHandler(consoleHandler)
 
 
 
-def sigint_handler(signum, frame):
-    SHAMElogger.info('<CTRL+C>')
-    exit()
- 
-signal.signal(signal.SIGINT, sigint_handler)
+
+
+'''
+	**************** Begin shamebot **************** 
+'''
+memepool = list()
+gifpool = list()
+statsOBJ = None
+
+'''
+	@on_ready() - performed on initialization and login
+'''
+@bot.event
+async def on_ready():
+	global statsOBJ
+	#load meme images
+	SHAMElogger.info("Loading bot stats trackers")
+	statsOBJ = RoboStats(SHAMElogger, roboutils.cmdlist)
+
+	#load memes and gifs
+	SHAMElogger.info("Loading memes and gifs")
+	loadimages()
+
+	#Get command lists
+	SHAMElogger.info('Successful login {0.user}'.format(bot))
+
+
+def loadimages():
+	for root, dirs, files in os.walk(os.path.abspath("images/memes/")):
+		for file in files:
+			if file is None:
+				SHAMElogger.error("no memes found!")
+				break;
+			memepool.append(os.path.join(root, file))
+			SHAMElogger.info("Loaded meme %s" % memepool[-1]) 
+
+	for root, dirs, files in os.walk(os.path.abspath("images/gifs/")):
+		for file in files:
+			if file is None:
+				SHAMElogger.error("no gifs found!")
+				return
+			gifpool.append(os.path.join(root, file))
+			SHAMElogger.info("Loaded gif %s" % memepool[-1])
+
+"""
+		Command handlers
+"""
+@bot.command(description=roboutils.CMD_PING_DESC,
+			 help=roboutils.CMD_PING_HELP)
+async def ping(ctx):
+	latency = bot.latency
+	await ctx.send(latency)
+	statsOBJ.logCommandUsage(SHAMElogger, '$ping')
+
+@bot.command(description=roboutils.CMD_MEME_DESC,
+			 help=roboutils.CMD_MEME_HELP)
+async def meme(ctx):
+	await ctx.send("", file=discord.File(random.choice(memepool)))
+	statsOBJ.logCommandUsage(SHAMElogger, '$meme')
+
+@bot.command(description=roboutils.CMD_GIF_DESC,
+			 help=roboutils.CMD_GIF_HELP)
+async def gif(ctx):
+	await ctx.send("", file=discord.File(random.choice(gifpool)))
+	statsOBJ.logCommandUsage(SHAMElogger, '$gif')
+
+@bot.command(description=roboutils.CMD_BUGREPORT_DESC,
+			 help=roboutils.CMD_BUGREPORT_HELP)
+async def bugreport(ctx):
+	await ctx.send(roboutils.BUG)
+	statsOBJ.logCommandUsage(SHAMElogger, '$bugreport')
+
+@bot.command(description=roboutils.CMD_SHAMEME_DESC,
+			 help=roboutils.CMD_SHAMEME_HELP)
+async def shamemedaddy(ctx):
+	await ctx.send(roboflame.JT)
+	statsOBJ.logCommandUsage(SHAMElogger, '$shamemedaddy')
+
+@bot.command(description=roboutils.CMD_HELLO_DESC,
+			 help=roboutils.CMD_HELLO_HELP)
+async def hello(ctx):
+	await ctx.send('Hello %s!' % str(ctx.author).split('#')[0] )
+	statsOBJ.logCommandUsage(SHAMElogger, '$hello')
+
+@bot.command(description=roboutils.CMD_VERSION_DESC,
+			 help=roboutils.CMD_VERSION_HELP)
+async def version(ctx):
+	await ctx.send("I am currently on %s" % roboutils.VERSION)
+	statsOBJ.logCommandUsage(SHAMElogger, '$version')
+
+
+
+'''
+	@on_message() - Core message interaction & response 
+'''
+@bot.event
+async def on_message(message):
+	global statsOBJ
+	if message.content.startswith('$'):
+		SHAMElogger.info('recieved %s from %s' % (message.content, message.author))
+	else:
+		return
+	
+	# Shamebot doesn't need to respond to itself :) 
+	if message.author == bot.user:
+		return
+
+	await bot.process_commands(message)
+
+	
 
 
 
 
 '''
-	Begin shamebot 
+	@on_disconnect() - called on network disconnect, interrupt, etc 
 '''
-class Shamebot(discord.Client):
-
-	memepool = list()
-	gifpool = list()
-	statsOBJ = None
-	
-	'''
-		@on_ready() - performed on initialization and login
-	'''
-	async def on_ready(self):
-
-		#load meme images
-		SHAMElogger.info("Loading bot stats trackers")
-		self.statsOBJ = RoboStats(SHAMElogger, roboutils.cmdlist)
-
-		#load meme images
-		SHAMElogger.info("Loading meme images")
-		self.loadimages()
-
-		#Get command lists
-		SHAMElogger.info('Successful login {0.user}'.format(client))
-
-	
-	def loadimages(self):
-		for root, dirs, files in os.walk(os.path.abspath("images/memes/")):
-			for file in files:
-				if file is None:
-					SHAMElogger.error("no memes found!")
-					break;
-				self.memepool.append(os.path.join(root, file))
-				SHAMElogger.info("Loaded meme %s" % self.memepool[-1]) 
-
-		for root, dirs, files in os.walk(os.path.abspath("images/gifs/")):
-			for file in files:
-				if file is None:
-					SHAMElogger.error("no gifs found!")
-					return
-				self.gifpool.append(os.path.join(root, file))
-				SHAMElogger.info("Loaded gif %s" % self.memepool[-1])
-
-	'''
-		@on_message() - Core message interaction & response 
-	'''
-	async def on_message(self, message):
-		if message.content.startswith('$'):
-			SHAMElogger.info('recieved %s from %s' % (message.content, message.author))
-		else:
-			return
-		
-		# Shamebot doesn't need to respond to itself :) 
-		if message.author == client.user:
-			return
-
-		if message.content.startswith('$help'):
-			await message.channel.send(roboutils.helpstr)
-			self.statsOBJ.logCommandUsage('$help')
-		
-		elif message.content.startswith('$meme'):
-			await message.channel.send("", file=discord.File(random.choice(self.memepool)))
-			self.statsOBJ.logCommandUsage('$meme')
-
-		elif message.content.startswith('$gif'):
-			await message.channel.send("", file=discord.File(random.choice(self.gifpool)))
-			self.statsOBJ.logCommandUsage('$gif')
-
-		elif message.content.startswith('$bugreport'):
-			await message.channel.send(roboutils.BUG)
-			self.statsOBJ.logCommandUsage('$bugreport')
-
-		elif message.content.startswith('$shamemedaddy'):
-			await message.channel.send(roboflame.JT)
-			self.statsOBJ.logCommandUsage('$shamemedaddy')
-
-		elif message.content.startswith('$hello'):
-			await message.channel.send('Hello {.author}!'.format(message))
-			self.statsOBJ.logCommandUsage('$hello')
-
-		elif message.content.startswith('$version'):
-			await message.channel.send("I am currently on %s" % roboutils.VERSION)
-			self.statsOBJ.logCommandUsage('$version')
-	'''
-		@on_disconnect() - called on network disconnect, interrupt, etc 
-	'''
-	async def on_disconnect(self):
-		SHAMElogger.debug('disconnected')
-		self.statsOBJ.statsToFile(SHAMElogger)
-	
+@bot.event
+async def on_disconnect():
+	SHAMElogger.debug('disconnected')
+	statsOBJ.statsToFile(SHAMElogger)
 
 
+#
 
 if __name__ == "__main__":
-	client = Shamebot()
-	client.run(str(argv[1]))
+	#os.path.expanduser('~')
+	
+
+	bot.run(str(argv[1]))
