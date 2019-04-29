@@ -1,0 +1,10 @@
+- Shamebot v0.0.15
+
+Changes/Additions:
+- Moved non discord API calls to roboutils
+- All roboutils functions now async
+- New "$addmeme" command
+- New roboutils.reloadmemes functionality
+
+Bug Fixes:
+- fixed ping to provide proper ms time

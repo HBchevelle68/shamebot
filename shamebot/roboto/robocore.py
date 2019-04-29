@@ -4,7 +4,6 @@ from discord.ext.commands import Bot
 
 import logging
 import random
-import signal
 import os
 from sys import argv
 from logging.handlers import RotatingFileHandler
@@ -71,28 +70,10 @@ async def on_ready():
 
 	#load memes and gifs
 	SHAMElogger.info("Loading memes and gifs")
-	loadimages()
+	await roboutils.loadimages(SHAMElogger, memepool, gifpool)
 
 	#Get command lists
-	SHAMElogger.info('Successful login {0.user}'.format(bot))
-
-
-def loadimages():
-	for root, dirs, files in os.walk(os.path.abspath("images/memes/")):
-		for file in files:
-			if file is None:
-				SHAMElogger.error("no memes found!")
-				break;
-			memepool.append(os.path.join(root, file))
-			SHAMElogger.info("Loaded meme %s" % memepool[-1]) 
-
-	for root, dirs, files in os.walk(os.path.abspath("images/gifs/")):
-		for file in files:
-			if file is None:
-				SHAMElogger.error("no gifs found!")
-				return
-			gifpool.append(os.path.join(root, file))
-			SHAMElogger.info("Loaded gif %s" % memepool[-1])
+	SHAMElogger.info('<< SUCCESSFUL LOGIN {0.user} >>'.format(bot))
 
 """
 		Command handlers
@@ -101,7 +82,7 @@ def loadimages():
 			 help=roboutils.CMD_PING_HELP)
 async def ping(ctx):
 	latency = bot.latency
-	await ctx.send(latency)
+	await ctx.send("%f%s" % ((latency*1000),'ms'))
 	statsOBJ.logCommandUsage(SHAMElogger, '$ping')
 
 @bot.command(description=roboutils.CMD_MEME_DESC,
@@ -134,6 +115,14 @@ async def hello(ctx):
 	await ctx.send('Hello %s!' % str(ctx.author).split('#')[0] )
 	statsOBJ.logCommandUsage(SHAMElogger, '$hello')
 
+@bot.command(description=roboutils.CMD_ADDMEME_DESC,
+			 help=roboutils.CMD_ADDMEME_HELP)
+async def addmeme(ctx):
+	if len(ctx.message.attachments) == 1:
+		await roboutils.savefile(SHAMElogger, ctx)
+		await roboutils.reloadmemes(SHAMElogger, memepool)
+		statsOBJ.logCommandUsage(SHAMElogger, '$addmeme')
+
 @bot.command(description=roboutils.CMD_VERSION_DESC,
 			 help=roboutils.CMD_VERSION_HELP)
 async def version(ctx):
@@ -147,7 +136,7 @@ async def version(ctx):
 '''
 @bot.event
 async def on_message(message):
-	global statsOBJ
+	#Log interaction attempts
 	if message.content.startswith('$'):
 		SHAMElogger.info('recieved %s from %s' % (message.content, message.author))
 	else:
@@ -156,6 +145,9 @@ async def on_message(message):
 	# Shamebot doesn't need to respond to itself :) 
 	if message.author == bot.user:
 		return
+
+
+
 
 	await bot.process_commands(message)
 
