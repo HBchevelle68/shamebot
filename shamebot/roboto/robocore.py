@@ -1,18 +1,28 @@
+# Discord API imports
 import discord
 from discord.ext import commands
 from discord.ext.commands import Bot
 
+# standard python imports
 import logging
 import random
-import os
 from sys import argv
 from logging.handlers import RotatingFileHandler
 
+# internal imports
 import roboflame
 import roboutils
 from robostats import RoboStats
 
+
+'''
+	**************** Begin globals/exports **************** 
+'''
+
+
+# set global Bot object
 bot = commands.Bot(command_prefix='$', case_insensitive=True)
+
 
 ''' 
 	Set up logging 
@@ -75,6 +85,8 @@ async def on_ready():
 	#Get command lists
 	SHAMElogger.info('<< SUCCESSFUL LOGIN {0.user} >>'.format(bot))
 
+
+
 """
 		Command handlers
 """
@@ -136,25 +148,19 @@ async def version(ctx):
 '''
 @bot.event
 async def on_message(message):
+	# Shamebot doesn't need to respond to itself :) 
+	if message.author == bot.user:
+		return
 	#Log interaction attempts
 	if message.content.startswith('$'):
 		SHAMElogger.info('recieved %s from %s' % (message.content, message.author))
 	else:
 		return
 	
-	# Shamebot doesn't need to respond to itself :) 
-	if message.author == bot.user:
-		return
-
-
-
 
 	await bot.process_commands(message)
 
 	
-
-
-
 
 '''
 	@on_disconnect() - called on network disconnect, interrupt, etc 
@@ -168,7 +174,4 @@ async def on_disconnect():
 #
 
 if __name__ == "__main__":
-	#os.path.expanduser('~')
-	
-
 	bot.run(str(argv[1]))
