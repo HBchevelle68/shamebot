@@ -131,9 +131,17 @@ async def hello(ctx):
 			 help=roboutils.CMD_ADDMEME_HELP)
 async def addmeme(ctx):
 	if len(ctx.message.attachments) == 1:
-		await roboutils.savefile(SHAMElogger, ctx)
+		await roboutils.savememe(SHAMElogger, ctx)
 		await roboutils.reloadmemes(SHAMElogger, memepool)
 		statsOBJ.logCommandUsage(SHAMElogger, '$addmeme')
+
+@bot.command(description=roboutils.CMD_ADDGIF_DESC,
+			 help=roboutils.CMD_ADDGIF_HELP)
+async def addgif(ctx):
+	if len(ctx.message.attachments) == 1:
+		await roboutils.savegif(SHAMElogger, ctx)
+		await roboutils.reloadgifs(SHAMElogger, gifpool)
+		statsOBJ.logCommandUsage(SHAMElogger, '$addgif')
 
 @bot.command(description=roboutils.CMD_VERSION_DESC,
 			 help=roboutils.CMD_VERSION_HELP)
