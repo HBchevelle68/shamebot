@@ -41,7 +41,7 @@ CMD_VERSION_DESC="Current version"
 CMD_ADDMEME_DESC="<$addmeme> <meme>\nThis only accepts files and will not save links."
 CMD_ADDGIF_DESC="<$addgif> <gif>\nThis only accepts files and will not save links."
 
-VERSION="0.0.40"
+VERSION="0.0.50"
 
 BUG ="""
 Found an bug you'd like to report? Go to
@@ -62,13 +62,16 @@ BASEDIR = dirname(__name__)
 """
 async def savememe(Slogger, ctx):
 	Slogger.info("Found file attached: %s" % ctx.message.attachments)
-	#Holy OOP batman
+	
+	#Grab attachment object
 	atch = ctx.message.attachments[0]
 	fname = atch.filename
+	
 	#Build out an abs path for reliability
 	mpool_path = abspath(join(BASEDIR, "images/memes/"))
 	byteswritten = await atch.save(join(mpool_path, fname), use_cached=True)
 	Slogger.info("saved %s:%d bytes in %s" % (fname, byteswritten, mpool_path))
+
 
 """
 	@savegif wrapper to save a gif submitted to shaebot
@@ -90,6 +93,7 @@ async def savegif(Slogger, ctx):
 	loads all memes and gifs. assumes empty pool objects
 """	
 async def loadimages(Slogger, memepool, gifpool):
+	# Populate mempool from disk
 	for root, dirs, files in walk(abspath("images/memes/")):
 		for file in files:
 			if file is None:
@@ -98,6 +102,7 @@ async def loadimages(Slogger, memepool, gifpool):
 			memepool.append(join(root, file))
 			Slogger.info("Loaded meme %s" % memepool[-1]) 
 
+	# Populate gifpool from disk
 	for root, dirs, files in walk(abspath("images/gifs/")):
 		for file in files:
 			if file is None:

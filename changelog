@@ -1,10 +1,11 @@
-- Shamebot v0.0.15
+- Shamebot v0.0.50
 
 Changes/Additions:
-- Moved non discord API calls to roboutils
-- All roboutils functions now async
-- New "$addmeme" command
-- New roboutils.reloadmemes functionality
+- Added logging member to Robostats Class
+- Now SHAMElogger is pointed to by Robostats Class member, removing need to haul objects around
+- Added a basic feedback mechanism for longer executing tasks
+- Added feedback response when user is adding assets 
+- Overloaded Client.on_error() to provide logging of unhandled exceptions
 
 Bug Fixes:
-- fixed ping to provide proper ms time
+- Fixed bug that caused mempool to be overwritten 
