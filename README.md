@@ -20,7 +20,7 @@ for shame
 - [ ] Build OW user data storage 
 
 ### Bot
-- [ ] Heuristic exposure to user 
+- [ ] Heuristic exposure to user (Chivel/Tom)
 - [ ] Provide server feedback; especially during actions that may require extra time
 
 ### Test Development 
@@ -28,8 +28,8 @@ for shame
 - [ ] Build Starcraft II tests 
 
 ### Server
-- [ ] User accounts created
-- [ ] ssh 
+- [ ] User accounts created (Chris)
+- [ ] ssh (Chris)
 - [ ] Scripted, repeating, Log compression + archive support
 
 ### Final testing
