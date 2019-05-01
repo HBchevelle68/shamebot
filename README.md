@@ -8,7 +8,7 @@ for shame
   - [X] Bot basic interaction (Chivel)
   - [X] OW 100% test pass rate (Chivel/Tom)
   - [ ] Deployment env set up (deployment not neccessary but should be at least pass functional testing (Chris) 
-  - [ ] Code Tags
+  - [ ] Code Tags (Chivel)
 
 
 
@@ -35,5 +35,5 @@ for shame
 ### Final testing
 - [ ] All users tested remote access to server
 - [ ] Starcraft II 100% test pass rate
-- [ ] Heuristics >=60% test pass rate
+- [ ] Heuristics >=60% test pass rate (Tom)
 - [ ] OW regresssion tests 100% opass rate
