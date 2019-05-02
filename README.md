@@ -9,7 +9,7 @@ for shame
   - [X] OW 100% test pass rate (Chivel/Tom)
   - [ ] Deployment env set up (deployment not neccessary but should be at least pass functional testing (Chris) 
   - [ ] Code Tags (Chivel)
-
+  - [ ] Code Review?
 
 
 
