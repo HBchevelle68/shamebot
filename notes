@@ -3,6 +3,3 @@
 pip3.7 install lxml
 
 
-client = Bot(command_prefix = "-")
-
-client = discord.Client()
