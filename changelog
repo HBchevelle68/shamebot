@@ -1,11 +1,9 @@
-- Shamebot v0.0.50
+- Shamebot v0.0.55
 
 Changes/Additions:
-- Added logging member to Robostats Class
-- Now SHAMElogger is pointed to by Robostats Class member, removing need to haul objects around
-- Added a basic feedback mechanism for longer executing tasks
-- Added feedback response when user is adding assets 
-- Overloaded Client.on_error() to provide logging of unhandled exceptions
+- Significant cleaning and standardization
+- Added on_resume() to log on network reconnection
+
 
 Bug Fixes:
-- Fixed bug that caused mempool to be overwritten 
+- Fixed logging order when adding meme's or gifs
