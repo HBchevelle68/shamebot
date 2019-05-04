@@ -1,9 +1,11 @@
-- Shamebot v0.0.55
+- Shamebot v0.0.50
 
 Changes/Additions:
-- Significant cleaning and standardization
-- Added on_resume() to log on network reconnection
-
+- If RoboStats fails; asks the admin if life should continue
+- Added chennel pool, for use later in shame
+- Added uptime command for retrieving bot uptime 
+- Removed conditional in on_message that was no longer needed
 
 Bug Fixes:
-- Fixed logging order when adding meme's or gifs
+- fixed bug that allowed a RoboStats object to be none and shamebot attempted to access it
+- fixed bug when RoboStats init failed statsToFile() would still attempt to write to file

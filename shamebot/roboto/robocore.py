@@ -6,6 +6,7 @@ from discord.ext.commands import Bot
 # standard python imports
 import logging
 import traceback
+import time
 import random
 from sys import argv 
 from os.path import abspath, join
@@ -62,8 +63,8 @@ SHAMElogger.setLevel(logging.DEBUG)
 shameFileHandler = RotatingFileHandler(filename=ShameLogPath,
 									   encoding='utf-8',
 									   mode='a',
-									   maxBytes=5*1024,
-									   backupCount=2)
+									   maxBytes=50*1024*1024,
+									   backupCount=4)
 shameFileHandler.setFormatter(ShamefullogFormatter)
 SHAMElogger.addHandler(shameFileHandler)
 
@@ -81,7 +82,12 @@ SHAMElogger.addHandler(consoleHandler)
 """
 memepool = list()
 gifpool = list()
+channelpool = dict()
+userpool = dict()
 statsOBJ = None
+starttime = time.localtime()
+
+
 
 """
 	@on_ready() - performed on initialization and login
@@ -93,6 +99,12 @@ async def on_ready():
 	SHAMElogger.info("Loading bot stats trackers")
 	statsOBJ = RoboStats(SHAMElogger, roboutils.cmdlist)
 
+	if statsOBJ.Slogger is None or len(statsOBJ.cmdstats) == 0:
+		SHAMElogger.warning("RoboStats Failed...Continue? (Y/N)")
+		if input().lower() == 'n':
+			SHAMElogger.warning("Well fuck you too")
+			await bot.close()
+
 	#load memes and gifs
 	SHAMElogger.info("Loading memes and gifs")
 	await roboutils.loadimages(SHAMElogger, memepool, gifpool)
@@ -102,12 +114,15 @@ async def on_ready():
 
 	# Experimental
 	for channel in bot.get_all_channels():
-		SHAMElogger.info(channel)
+		SHAMElogger.info("%s => %d "% (channel.name, channel.id))
+		channelpool[channel.name] = channel.id
 
 	for member in bot.get_all_members():
 		SHAMElogger.info(member)
+		# TO DO
+		# Grab Users move into memberpool
 
-	
+
 
 """
 	Command handlers
@@ -127,20 +142,23 @@ async def ping(ctx):
 	statsOBJ.logCommandUsage("$ping")
 
 
+
 @bot.command(description=roboutils.CMD_MEME_DESC,
 			 help=roboutils.CMD_MEME_HELP)
 async def meme(ctx):
-	await ctx.trigger_typing()
-	await ctx.send("", file=discord.File(random.choice(memepool)))
+	async with ctx.typing():
+		await ctx.send("", file=discord.File(random.choice(memepool)))
 	statsOBJ.logCommandUsage("$meme")
+
 
 
 @bot.command(description=roboutils.CMD_GIF_DESC,
 			 help=roboutils.CMD_GIF_HELP)
 async def gif(ctx):
-	await ctx.trigger_typing()
-	await ctx.send("", file=discord.File(random.choice(gifpool)))
+	async with ctx.typing():
+		await ctx.send("", file=discord.File(random.choice(gifpool)))
 	statsOBJ.logCommandUsage("$gif")
+
 
 
 @bot.command(description=roboutils.CMD_BUGREPORT_DESC,
@@ -150,11 +168,13 @@ async def bugreport(ctx):
 	statsOBJ.logCommandUsage("$bugreport")
 
 
+
 @bot.command(description=roboutils.CMD_SHAMEME_DESC,
 			 help=roboutils.CMD_SHAMEME_HELP)
 async def shamemedaddy(ctx):
 	await ctx.send(roboflame.JT)
 	statsOBJ.logCommandUsage("$shamemedaddy")
+
 
 
 @bot.command(description=roboutils.CMD_HELLO_DESC,
@@ -164,40 +184,41 @@ async def hello(ctx):
 	statsOBJ.logCommandUsage("$hello")
 
 
+
 @bot.command(description=roboutils.CMD_ADDMEME_DESC,
 			 help=roboutils.CMD_ADDMEME_HELP)
 async def addmeme(ctx):
-	await ctx.trigger_typing()
+	async with ctx.typing():
+		if len(ctx.message.attachments) == 1:
+			# Pass context to be saved
+			await roboutils.savememe(SHAMElogger, ctx)
 
-	if len(ctx.message.attachments) == 1:
-		# Pass context to be saved
-		await roboutils.savememe(SHAMElogger, ctx)
+			# Clear and reload pool; alert user
+			await roboutils.reloadmemes(SHAMElogger, memepool)
+			await ctx.send("%s has been added to my pool! Thanks! :)" %
+				   ctx.message.attachments[0].filename)
+			statsOBJ.logCommandUsage("$addmeme")
+		else:
+			await ctx.send("I can't find an attachment or you passed too many :(")
 
-		# Clear and reload pool; alert user
-		await roboutils.reloadmemes(SHAMElogger, memepool)
-		await ctx.send("%s has been added to my pool! Thanks! :)" %
-			   ctx.message.attachments[0].filename)
-		statsOBJ.logCommandUsage("$addmeme")
-	else:
-		await ctx.send("I can't find an attachment or you passed too many :(")
 
 
 @bot.command(description=roboutils.CMD_ADDGIF_DESC,
 			 help=roboutils.CMD_ADDGIF_HELP)
 async def addgif(ctx):
-	await ctx.trigger_typing()
+	async with ctx.typing():
+		if len(ctx.message.attachments) == 1:
+			# Pass context to be saved
+			await roboutils.savegif(SHAMElogger, ctx)
 
-	if len(ctx.message.attachments) == 1:
-		# Pass context to be saved
-		await roboutils.savegif(SHAMElogger, ctx)
+			# Clear and reload pool; alert user
+			await roboutils.reloadgifs(SHAMElogger, gifpool)
+			await ctx.send("%s has been added to my pool! Thanks! :)" %
+						   ctx.message.attachments[0].filename)
+			statsOBJ.logCommandUsage("$addgif")
+		else:
+			await ctx.send("I can't find an attachment :(")
 
-		# Clear and reload pool; alert user
-		await roboutils.reloadgifs(SHAMElogger, gifpool)
-		await ctx.send("%s has been added to my pool! Thanks! :)" %
-					   ctx.message.attachments[0].filename)
-		statsOBJ.logCommandUsage("$addgif")
-	else:
-		await ctx.send("I can't find an attachment :(")
 
 
 @bot.command(description=roboutils.CMD_VERSION_DESC,
@@ -208,8 +229,32 @@ async def version(ctx):
 
 
 
+@bot.command(description=roboutils.CMD_UPTIME_DESC,
+			 help=roboutils.CMD_UPTIME_HELP)
+async def uptime(ctx):
+	async with ctx.typing():
+		uptime = await roboutils.calcuptime(SHAMElogger, starttime)
+		await ctx.send("%s" % uptime)
+	statsOBJ.logCommandUsage("$uptime")
+
+
+
 """
-	@on_message() - Core message interaction & response 
+	@on_voice_state_update() - Called whenever a user changes their
+							   voice status (join, mute, etc)
+"""
+@bot.event
+async def on_voice_state_update(member, before, after):
+	pass
+	# TO DO
+	# This can be really useful to kick off interesting
+	# or funny tasks
+
+
+
+"""
+	@on_message() - Called when ever a text message is
+				    sent in public chats 
 """
 @bot.event
 async def on_message(message):
@@ -217,14 +262,9 @@ async def on_message(message):
 	if message.author == bot.user:
 		return
 
-	#Log interaction attempts
-	if message.content.startswith('$'):
-		SHAMElogger.info("recieved %s from %s" % (message.content, message.author))
-	else:
-		return
-
 	# Hand off to command handler
 	await bot.process_commands(message)
+
 
 	
 """
@@ -238,8 +278,9 @@ async def on_error(event_name, *args, **kwargs):
 	SHAMElogger.error("<< END UNHANDLED EXCEPTION >>") 
 
 
+
 """
-	@on_disconnect() - called on network disconnect, interrupt, etc 
+	@on_disconnect() - Called on network disconnect, interrupt, etc 
 """
 @bot.event
 async def on_disconnect():
@@ -247,12 +288,14 @@ async def on_disconnect():
 	statsOBJ.statsToFile()
 
 
+
 """
 	@on_resume() - called on network re-connect
 """
 @bot.event
 async def on_resume():
-	SHAMElogger.debug("<< RE-CONNECTED >>")
+	SHAMElogger.debug("<< RECONNECTED >>")
+
 
 
 if __name__ == "__main__":

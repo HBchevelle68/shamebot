@@ -16,18 +16,17 @@ class RoboStats:
 		# verify object
 		if corelogger is None:
 			print("<<\n ERROR STATS INITIALIZATION FAILED >>\n")
-			return
-
+			
 		# Grab ptr
 		self.Slogger = corelogger
 
 		# Verify object
 		if cmdlist is None:
 			self.Slogger.error("cmdlist is None")
-			return
+			
 		elif len(cmdlist) == 0:
 			self.Slogger.error("cmdlist has 0 elements")
-			return
+			
 		else:
 			# Populate cmd list
 			for item in cmdlist:
@@ -49,6 +48,11 @@ class RoboStats:
 		@statsToFile - store all stats to log file. Use on clean
 	"""
 	def statsToFile(self):
+		# If either are non existant just leave 
+		if self.Slogger is None or len(self.cmdstats) == 0:
+			return
+
+		# Record all stats gathered during uptime
 		self.Slogger.info("Writing stats to %s" % (self.statsfile)) 
 		with open(self.statsfile, 'a') as f:
 			for key,value in self.cmdstats.items():
