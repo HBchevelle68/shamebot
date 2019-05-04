@@ -21,11 +21,12 @@ for shame
 
 ### Bot
 - [ ] Heuristic exposure to user (Chivel/Tom)
-- [ ] Provide server feedback; especially during actions that may require extra time
+- [ ] Provide server feedback; especially during actions that may require extra time (Chivel)
 
 ### Test Development 
-- [ ] Build heuristic API  tests (Tom) 
+- [ ] Build heuristic API tests (Tom)
 - [ ] Build Starcraft II tests 
+- [ ] Build >1 tests 
 
 ### Server
 - [ ] User accounts created (Chris)
