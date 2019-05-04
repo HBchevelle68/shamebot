@@ -61,11 +61,11 @@ class Core(object):
 		CP.print_info("Testsuite summary for shamebot 0.0.1", prefix="\t\t\t     ")
 		CP.print_info(bdr)
 		CP.print_bold("# TOTAL: %d" % self.totalTracker)
-		if self.passTracker > 1:
+		if self.passTracker > 0:
 			CP.print_pass("# PASS:  %d" % self.passTracker)
 		else:
 			CP.print_bold("# PASS:  %d" % self.passTracker)
-		if self.failTracker > 1:
+		if self.failTracker > 0:
 			CP.print_fail("# FAIL:  %d" % self.failTracker)
 		else:
 			CP.print_bold("# FAIL:  %d" % self.failTracker)

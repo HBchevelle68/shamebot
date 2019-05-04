@@ -18,7 +18,7 @@ def test_OW_class_init(arg1):
 
 def OW_Class_test_1(coreObj):
 
-
+	# Test 1.1
 	try:
 		coreObj.inc_total()
 		CP.print_info("Test 1.1 -- Overwatch(None, None)", prefix="\n")
@@ -37,3 +37,11 @@ def OW_Class_test_1(coreObj):
 			core.print_strace()
 			coreObj.check_n_set_tracker(coreObj.FAILURE)
 			coreObj.inc_fail()	
+
+	"""
+
+	 more tests are needed as it sits, there are no tests
+	 showing successful execution or edge cases such as
+	 an valid attempt but incorrectly spelled name
+	 
+	"""
