@@ -38,7 +38,7 @@ CMD_SHAMEME_DESC   = "Get a hardcoded shame....for now"
 CMD_UPTIME_DESC	   = "Returns uptime of shamebot in the format [D day[s], ][H]H:MM:SS[.UUUUUU]"
 CMD_VERSION_DESC   = "Current version"
 
-VERSION = "0.0.50"
+VERSION = "0.1.0"
 
 BUG = """Found an bug you'd like to report? Go to
 https://github.com/HBchevelle68/shamebot/issues
