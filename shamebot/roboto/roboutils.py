@@ -3,16 +3,10 @@
 	This file contains constants and other utilities for robocore
 """
 
-# Discord API imports
-from discord import Attachment
-from discord.ext.commands import Context
-
-
-# standard python imports
+# Standard python imports
 import time
 import datetime
-from os import walk
-from os.path import abspath, join, dirname 
+
 
 
 """
@@ -20,7 +14,7 @@ from os.path import abspath, join, dirname
 """
 
 cmdlist = ["$addgif", "$addmeme", "$bugreport", "$gif", "$hello",
-		   "$meme", "$ping", "$shamemedaddy", "$version"]
+		   "$meme", "$ping", "$shamemedaddy", "$uptime", "$version"]
 
 CMD_ADDGIF_HELP    = "Submit gif to gif-pool"
 CMD_ADDMEME_HELP   = "Submit meme to meme-pool"
@@ -50,8 +44,6 @@ BUG = """Found an bug you'd like to report? Go to
 https://github.com/HBchevelle68/shamebot/issues
 """
 
-# Provides PWD
-PWD = dirname(__name__)
 
 	
 
@@ -60,105 +52,6 @@ PWD = dirname(__name__)
 	**************** Begin function exports **************** 
 """
 
-"""
-	@savememe - wrapper to save a meme submitted to shaebot
-"""
-async def savememe(Slogger, ctx):
-	Slogger.info("Found file attached: %s" % ctx.message.attachments)
-	
-	#Grab attachment object
-	atch = ctx.message.attachments[0]
-	fname = atch.filename
-	
-	#Build out an abs path then save file
-	mpool_path = abspath(join(PWD, "images/memes/"))
-	byteswritten = await atch.save(join(mpool_path, fname), use_cached=True)
-	Slogger.info("saved %s:%d bytes in %s" % (fname, byteswritten, mpool_path))
-
-
-"""
-	@savegif - wrapper to save a gif submitted to shaebot
-"""
-async def savegif(Slogger, ctx):
-	Slogger.info("Found file attached: %s" % ctx.message.attachments)
-
-	#Holy OOP batman
-	atch = ctx.message.attachments[0]
-	fname = atch.filename
-
-	#Build out an abs path then save file
-	gpool_path = abspath(join(PWD, "images/gifs/"))
-	byteswritten = await atch.save(join(gpool_path, fname), use_cached=True)
-	Slogger.info("saved %s:%d bytes in %s" % (fname, byteswritten, gpool_path))
-
-
-
-"""
-	@loadimages - only for use during on_ready call
-				  loads all memes and gifs. assumes
-				  empty pool objects
-"""
-async def loadimages(Slogger, memepool, gifpool):
-	# Populate mempool from disk
-	for root, dirs, files in walk(abspath("images/memes/")):
-		for file in files:
-			if file is None:
-				Slogger.error("no memes found!")
-				break;
-			memepool.append(join(root, file))
-			Slogger.info("Loaded meme %s" % memepool[-1]) 
-
-	# Populate gifpool from disk
-	for root, dirs, files in walk(abspath("images/gifs/")):
-		for file in files:
-			if file is None:
-				Slogger.error("no gifs found!")
-				return
-			gifpool.append(join(root, file))
-			Slogger.info("Loaded gif %s" % gifpool[-1])
-
-
-
-"""
-	@reloadmemes - subpiece of loadimages. for use 
-				   when meme pool needs to be updated 
-"""
-async def reloadmemes(Slogger, memepool):
-	# Clear list
-	memepool.clear()
-	Slogger.info("<<CLEARED MEME POOL>>")
-
-	# Populate mempool from disk
-	for root, dirs, files in walk(abspath("images/memes/")):
-		for file in files:
-			if file is None:
-				Slogger.error("no memes found!")
-				break;
-			memepool.append(join(root, file))
-			Slogger.info("Loaded meme %s" % memepool[-1])
-	Slogger.info("<<RELOADED MEME POOL>>")
-
-
-
-"""
-	@reloadgifs - subpiece of loadimages. for use 
-				  when gif pool needs to be updated 
-"""
-async def reloadgifs(Slogger, gifpool):
-	# Clear list
-	gifpool.clear()
-	Slogger.info("<<CLEARED GIF POOL>>")
-	
-	# Populate gifpool from disk
-	for root, dirs, files in walk(abspath("images/gifs/")):
-		for file in files:
-			if file is None:
-				Slogger.error("no gifs found!")
-				break;
-			gifpool.append(join(root, file))
-			Slogger.info("Loaded gif %s" % gifpool[-1])
-	Slogger.info("<<RELOADED GIF POOL>>")
-
 
 
 """
@@ -166,8 +59,13 @@ async def reloadgifs(Slogger, gifpool):
 				  format [D day[s], ][H]H:MM:SS[.UUUUUU]
 """
 async def calcuptime(Slogger, stime):
+	#start time
 	stime_epoch = time.mktime(stime)
+
+	#Current time
 	currtime_epoch = time.mktime(time.localtime())
+	
+	#Difference
 	return str(datetime.timedelta(seconds=currtime_epoch-stime_epoch)) 
 	
 
