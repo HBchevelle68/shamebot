@@ -1,11 +1,9 @@
-- Shamebot v0.0.69
+- Shamebot v0.0.0
 
 Changes/Additions:
-- If RoboStats fails; asks the admin if life should continue
-- Added chennel pool, for use later in shame
-- Added uptime command for retrieving bot uptime 
-- Removed conditional in on_message that was no longer needed
+- Created RoboMedia class to handle all media related tasks
+- Removed all media related tasks from roboutils 
+- Cleaned logic in multiple media and bot command functions
 
 Bug Fixes:
-- fixed bug that allowed a RoboStats object to be none and shamebot attempted to access it
-- fixed bug when RoboStats init failed statsToFile() would still attempt to write to file
+- None

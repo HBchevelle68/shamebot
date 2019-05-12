@@ -1,7 +1,9 @@
 # Discord API imports
 import discord
+from discord import ChannelType
 from discord.ext import commands
 from discord.ext.commands import Bot
+
 
 # Standard python imports
 import logging
@@ -90,8 +92,12 @@ Media = None
 # Grab birthday
 starttime = time.localtime()
 
+
+Voicechannelpool = dict()
+Textchannelpool = list()
+
 #Experimental 
-channelpool = dict()
+
 userpool = dict()
 
 
@@ -123,11 +129,23 @@ async def on_ready():
 			await bot.close()
 
 
+	SHAMElogger.info("%s" % bot.guilds[0])
 
-	# Experimental
-	for channel in bot.get_all_channels():
-		SHAMElogger.info("%s => %d "% (channel.name, channel.id))
-		channelpool[channel.name] = channel.id
+
+
+	for text in bot.guilds[0].text_channels:
+		Textchannelpool.append(text)
+		SHAMElogger.info("Text Channel:%s" % text)
+
+
+	for channel in bot.guilds[0].voice_channels:
+		global Voicechannelpool
+		SHAMElogger.info("Voice Channel:%s" % channel)
+		Voicechannelpool[channel.name] = list()
+		if len(channel.members) > 0:
+			for x in channel.members:
+				SHAMElogger.info("User in channel: %s" % x.name)
+				Voicechannelpool[channel.name].append(x.name)
 
 	for member in bot.get_all_members():
 		SHAMElogger.info(member)
@@ -252,16 +270,42 @@ async def uptime(ctx):
 
 
 
+@bot.command(description=roboutils.CMD_FEATUREREQ_DESC,
+			 help=roboutils.CMD_FEATUREREQ_HELP)
+async def feature(ctx):
+	async with ctx.typing():
+		await ctx.send("%s" % roboutils.FEATURE)
+	Stats.logCommandUsage("$feature")
+
+
+
 """
 	@on_voice_state_update() - Called whenever a user changes their
 							   voice status (join, mute, etc)
 """
 @bot.event
 async def on_voice_state_update(member, before, after):
-	pass
-	# TO DO
-	# This can be really useful to kick off interesting
-	# or funny tasks
+
+	if before.channel != None:
+		bchnl_name = before.channel.name
+	else:
+		bchnl_name = None
+	if after.channel != None:
+		achnl_name = after.channel.name
+	else:
+		achnl_name  = None 
+
+	SHAMElogger.info(member.name)
+	ret = await roboutils.voice_change(SHAMElogger,
+						   	    	  (member.name, 
+						   	   	 	   bchnl_name,
+						   	   	 	   achnl_name ), 
+						   			   Voicechannelpool)
+
+	if ret != None:
+		async with Textchannelpool[0].typing():
+			await Textchannelpool[0].send("LOOOOL")
+			await Textchannelpool[0].send("%s and %s are gaaay bois" % (ret[0], ret[1]))
 
 
 
