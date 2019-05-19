@@ -77,22 +77,21 @@ async def calcuptime(Slogger, stime):
 
 
 async def voice_change(Slogger, mbr_tuple, chnl_pool):
-
+	mbr
 	before = mbr_tuple[1]
 	after  = mbr_tuple[2]
 
 	if before is None:
-		chnl_pool[after].append(mbr_tuple[0].name)
-		Slogger.info("He landed here %s:%d" % (after, len(chnl_pool[after])))
+		# Virgin join 
+		chnl_pool[after].append(mbr.name)
+		
 	else:
-		for x in chnl_pool[before]:
-
-			Slogger.info(x)
-
-		chnl_pool[before].remove(mbr_tuple[0])
-		chnl_pool[after].append(mbr_tuple[0])
-		Slogger.info("G g gone %s:%d" % (before, len(chnl_pool[before])))
-		Slogger.info("He landed here %s:%d" % (after, len(chnl_pool[after])))
+		# Remove from old channel
+		chnl_pool[before].remove(mbr)
+		
+		# Add to new channel
+		chnl_pool[after].append(mbr)
+		
 
 	for chnl,plist in chnl_pool.items():
 		if len(plist) == 2:

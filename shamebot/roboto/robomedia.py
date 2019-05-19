@@ -28,7 +28,7 @@ class RoboMedia:
 
 	
 
-	"""
+	""" PUBLIC
 		Initialize object by getting a ptr to shamebot's logger
 		and performing an Initial load of all media 
 	"""
@@ -38,7 +38,7 @@ class RoboMedia:
 
 
 
-	"""
+	""" PUBLIC
 		@savememe - wrapper to save a meme submitted to shaebot
 
 	"""
@@ -59,7 +59,7 @@ class RoboMedia:
 		
 
 
-	"""
+	""" PUBLIC
 		@savegif - wrapper to save a gif submitted to shaebot
 
 	"""

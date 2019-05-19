@@ -14,6 +14,7 @@ from sys import argv
 from os.path import abspath, join, dirname
 from logging.handlers import RotatingFileHandler
 
+
 # Internal imports
 import roboflame
 import roboutils
@@ -86,6 +87,7 @@ SHAMElogger.addHandler(consoleHandler)
   Globals used by bot interface. Initialized during on_ready()
   to use Bot execption handler
 """
+# Global robo* Objects
 Stats = None
 Media = None
 
@@ -97,7 +99,6 @@ Voicechannelpool = dict()
 Textchannelpool = list()
 
 #Experimental 
-
 userpool = dict()
 
 
@@ -115,10 +116,11 @@ userpool = dict()
 """
 @bot.event
 async def on_ready():
-	# Required for write
+	# Required for global write
 	global Stats
 	global Media
 
+	# Create global objects
 	Stats = RoboStats(SHAMElogger, roboutils.cmdlist)
 	Media = RoboMedia(SHAMElogger)
 
@@ -132,7 +134,8 @@ async def on_ready():
 	SHAMElogger.info("%s" % bot.guilds[0])
 
 
-
+	SHAMElogger.info(type(bot.guilds[0].text_channels))
+	SHAMElogger.info(type(bot.guilds[0].text_channels[0]))
 	for text in bot.guilds[0].text_channels:
 		Textchannelpool.append(text)
 		SHAMElogger.info("Text Channel:%s" % text)
@@ -149,6 +152,7 @@ async def on_ready():
 
 	for member in bot.get_all_members():
 		SHAMElogger.info(member)
+		SHAMElogger.info(type(member))
 		# Grab Users move into memberpool
 
 
