@@ -1,9 +1,14 @@
 - Shamebot v0.0.0
 
 Changes/Additions:
-- Created RoboMedia class to handle all media related tasks
-- Removed all media related tasks from roboutils 
-- Cleaned logic in multiple media and bot command functions
+- Added event documentation
+- RoboServer class 1.0 
 
 Bug Fixes:
-- None
+- fixed in on_voice_state_update that would throw exception when leaving channel but
+not joining a new one
+- fixed bug in Server.voice_change that was adding in the discord.Member
+object instead of discord.Member.name
+- fixed bug in Server.voice_change that could allow for the same user to be
+added in the list twice
+

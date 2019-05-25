@@ -9,6 +9,7 @@ import os
 class RoboStats:
 	# Members
 	statsfile = os.path.join(os.path.abspath(os.path.dirname(__name__)), "logs/shamebotStats")
+	cmdcount = None 
 	cmdstats = dict()
 	_Slogger = None
 
@@ -16,6 +17,8 @@ class RoboStats:
 
 		# Grab ptr
 		self._Slogger = corelogger
+
+		self.cmdcount = 0
 
 		# Verify object
 		if cmdlist is None or len(cmdlist) == 0:
@@ -34,7 +37,9 @@ class RoboStats:
 	"""
 	def logCommandUsage(self, cmd):
 		try:
+			self._Slogger.info("Executed command %s" % cmd)
 			self.cmdstats[cmd.lower()] += 1
+			self.cmdcount += 1
 		except KeyError:
 			self._Slogger.error("Command <%s> does not exist in stats list. Can't be logged" % cmd.lower())
 	
@@ -49,8 +54,10 @@ class RoboStats:
 		# Record all stats gathered during uptime
 		self._Slogger.info("Writing stats to %s" % (self.statsfile)) 
 		with open(self.statsfile, 'a') as f:
+			f.write('\n')
 			for key,value in self.cmdstats.items():
 				f.write("%s::%d\n" % (key,value))
 
 			# Write a delimeter marking diff instances
+			f.write("Total:%d" % self.cmdcount)
 			f.write((('+')*30))

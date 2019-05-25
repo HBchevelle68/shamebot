@@ -112,46 +112,26 @@ userpool = dict()
 
 
 
-"""
-	@on_ready() - performed on initialization and login
-				  to Discord backend
-"""
-@bot.event
-async def on_ready():
-	# Required for global write
-	global Stats
-	global Media
-	global Server
 
-	# Create global stats object
-	Stats = RoboStats(SHAMElogger, roboutils.cmdlist)
-	
-	# Verify stats setup correctly 
-	if len(Stats.cmdstats) == 0:
-		SHAMElogger.warning("RoboStats Failed...Continue? (Y/N)")
-		if input().lower() == 'n':
-			SHAMElogger.warning("Rest in pepes")
-			await bot.close()
-
-	# Create global media object 
-	Media = RoboMedia(SHAMElogger)
-
-	Server = RoboServer(SHAMElogger,
-						bot.guilds[0].voice_channels,
-						bot.guilds[0].text_channels,
-						bot.get_all_members())
-
-
-	SHAMElogger.info('<< SUCCESSFUL LOGIN {0.user} >>'.format(bot))
 
 
 
 """
 	Command handlers
 
-	All commands follow this core layout.
-	Each command is logged after it has finished
-	all execution required
+	All commands follow this core layout. Each command is logged after
+	it has finished execution
+
+	
+	General design of commands is that kick off some form task for the
+	user. These tasks often will return some form of feedback to 
+	the user either in the form of media or text based response
+
+
+	Commands cannot be accessed interanlly, meaning, you cannot call a task
+	from within an event or Robo* class. However, nearly all functionality 
+	within commands are accessiable from outside the commands
+
 """
 @bot.command(description=roboutils.CMD_PING_DESC,
 			 help=roboutils.CMD_PING_HELP)
@@ -165,12 +145,16 @@ async def ping(ctx):
 
 
 
+
+
 @bot.command(description=roboutils.CMD_MEME_DESC,
 			 help=roboutils.CMD_MEME_HELP)
 async def meme(ctx):
 	async with ctx.typing():
 		await ctx.send("", file=discord.File(random.choice(Media.memepool)))
 	Stats.logCommandUsage("$meme")
+
+
 
 
 
@@ -224,6 +208,58 @@ async def addgif(ctx):
 
 
 
+@bot.command(description=roboutils.CMD_LISTMEMES_DESC,
+			 help=roboutils.CMD_LISTMEMES_HELP)
+async def listmemes(ctx):
+	
+	
+	mlist = Media.listmemes()
+
+	async with ctx.typing():
+		if mlist != None:
+			
+			await ctx.send("Here are the Memes you can choose from:")
+			msg = ""
+			for item in mlist:
+				
+				msg = msg + item + "\n"  
+			await ctx.send(msg)
+		
+		else:
+			await ctx.send("Sorry! Looks like my Meme Pool is empty :(")
+	Stats.logCommandUsage("$listmemes")
+
+
+
+
+
+@bot.command(description=roboutils.CMD_LISTGIFS_DESC,
+			 help=roboutils.CMD_LISTGIFS_HELP)
+async def listgifs(ctx):
+	
+	
+	glist = Media.listgifs()
+
+	async with ctx.typing():
+		if glist != None:
+			
+			await ctx.send("Here are the Gifs you can choose from:")
+			msg = ""
+			for item in glist:
+				
+				msg = msg + item + "\n" 
+			await ctx.send(msg)
+		
+		else:
+			await ctx.send("Sorry! Looks like my Gif Pool is empty :(")
+	Stats.logCommandUsage("$listgifs")
+
+
+
+
+
+
+
 @bot.command(description=roboutils.CMD_BUGREPORT_DESC,
 			 help=roboutils.CMD_BUGREPORT_HELP)
 async def bugreport(ctx):
@@ -257,7 +293,7 @@ async def hello(ctx):
 @bot.command(description=roboutils.CMD_VERSION_DESC,
 			 help=roboutils.CMD_VERSION_HELP)
 async def version(ctx):
-	await ctx.send("I am currently on %s" % robotils.VERSION)
+	await ctx.send("I am currently on %s" % roboutils.VERSION)
 	Stats.logCommandUsage("$version")
 
 
@@ -308,6 +344,40 @@ async def feature(ctx):
 """
 
 
+"""
+	@on_ready() - performed on initialization and login
+				  to Discord backend
+"""
+@bot.event
+async def on_ready():
+	# Required for global write
+	global Stats
+	global Media
+	global Server
+
+	# Create global stats object
+	Stats = RoboStats(SHAMElogger, roboutils.cmdlist)
+	
+	# Verify stats setup correctly 
+	if len(Stats.cmdstats) == 0:
+		SHAMElogger.warning("RoboStats Failed...Continue? (Y/N)")
+		if input().lower() == 'n':
+			SHAMElogger.warning("Rest in pepes")
+			await bot.close()
+
+	# Create global media object 
+	Media = RoboMedia(SHAMElogger)
+
+	Server = RoboServer(SHAMElogger,
+						bot.guilds[0].voice_channels,
+						bot.guilds[0].text_channels,
+						bot.get_all_members())
+
+
+	SHAMElogger.info('<< SUCCESSFUL LOGIN {0.user} >>'.format(bot))
+
+
+
 
 
 """
@@ -343,6 +413,7 @@ async def on_voice_state_update(member, before, after):
 
 
 
+
 """
 	@on_message() - Called when ever a text message is
 				    sent in public chats 
@@ -358,6 +429,8 @@ async def on_message(message):
 
 
 	
+
+
 """
 	@on_error() - Called when unhandled exception occurs 
 """
@@ -367,6 +440,8 @@ async def on_error(event_name, *args, **kwargs):
 	SHAMElogger.error("Occured in --> %s" % event_name)
 	SHAMElogger.error(traceback.print_exc())
 	SHAMElogger.error("<< END UNHANDLED EXCEPTION >>") 
+
+
 
 
 
@@ -382,6 +457,8 @@ async def on_disconnect():
 		Stats = None
 
 
+
+
 """
 	@on_resume() - called on network re-connect
 """
@@ -391,6 +468,10 @@ async def on_resume():
 	SHAMElogger.debug("<< RECONNECTED >>")
 	if Stats == None:
 		Stats = RoboStats(SHAMElogger, roboutils.cmdlist)
+
+
+
+
 
 
 if __name__ == "__main__":

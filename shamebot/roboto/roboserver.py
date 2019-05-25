@@ -35,7 +35,7 @@ class RoboServer:
 			self.voiceUserCount[channel.name] = list()
 
 			# Populate voiceUserCount dictionary
-			if len(channel.members) > 0:
+			if channel.members:
 				for x in channel.members:
 					self._Slogger.info("User in channel: %s" % x.name)
 					self.voiceUserCount[channel.name].append(x.name)
@@ -45,25 +45,27 @@ class RoboServer:
 		self.userPool = user_list
 
 
+
+
+
 	async def voice_change(self, mbr, before, after):
 
-		print(mbr.name)
-		
+				
 		if before is None:
 			# Virgin join 
 			self.voiceUserCount[after].append(mbr.name)
 			
 		elif after is not None:
 			# Remove from old channel
-			if(len(self.voiceUserCount[before]) != 0 ):
+			if self.voiceUserCount[before]:
 				self.voiceUserCount[before].remove(mbr.name)
 			
 			# Add to new channel
 			self.voiceUserCount[after].append(mbr.name)
 			
-			# Check for shaming opportunity
-			if len(self.voiceUserCount[after]) == 2:
-				return self.voiceUserCount[after]
+		# Check for shaming opportunity
+		if len(self.voiceUserCount[after]) == 2:
+			return self.voiceUserCount[after]
 
 
 		return None

@@ -15,7 +15,8 @@ import logging
 """
 
 cmdlist = ["$addgif", "$addmeme", "$bugreport", "$feature", "$gif", "$hello",
-		   "$meme", "$ping", "$shamemedaddy", "$uptime", "$version"]
+		   "$listmemes", "$listgifs", "$meme", "$ping", "$shamemedaddy", "$uptime",
+		   "$version"]
 
 CMD_ADDGIF_HELP     = "Submit gif to gif-pool"
 CMD_ADDMEME_HELP    = "Submit meme to meme-pool"
@@ -23,6 +24,8 @@ CMD_BUGREPORT_HELP  = "Bug report info"
 CMD_FEATUREREQ_HELP = "Make a feature request"
 CMD_GIF_HELP        = "Random gif"
 CMD_HELLO_HELP      = "Say hello!"
+CMD_LISTMEMES_HELP  = "List memes"
+CMD_LISTGIFS_HELP  = "List gifs"
 CMD_MEME_HELP       = "Random meme"
 CMD_PING_HELP       = "How fast are the bits"
 CMD_SHAMEME_HELP    = "Hardcoded shame...for now"
@@ -35,13 +38,15 @@ CMD_BUGREPORT_DESC  = "Provides direction for reporting a bug you found"
 CMD_FEATUREREQ_DESC = "To report a bug browse to the link and select New Issue > Feature Request > Get Started"
 CMD_GIF_DESC        = "Get random gif from my pool of gifs"
 CMD_HELLO_DESC      = "Say hello!"
+CMD_LISTMEMES_DESC  = "Get a list of available memes for you to pick from"
+CMD_LISTGIFS_DESC   = "Get a list of available gifs for you to pick from"
 CMD_MEME_DESC       = "Get random meme from my pool of memes"
 CMD_PING_DESC       = "Returns latency"
 CMD_SHAMEME_DESC    = "Get a hardcoded shame....for now"
 CMD_UPTIME_DESC	    = "Returns uptime of shamebot in the format [D day[s], ][H]H:MM:SS[.UUUUUU]"
 CMD_VERSION_DESC    = "Current version"
 
-VERSION = "0.1.0"
+VERSION = "0.1.1"
 
 BUG = """Found an bug you'd like to report? Go to
 https://github.com/HBchevelle68/shamebot/issues

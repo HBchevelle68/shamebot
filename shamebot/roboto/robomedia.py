@@ -17,6 +17,7 @@ from os.path import abspath, join, dirname
 					 media access and storage functionality 
 '''
 class RoboMedia:
+
 	# Public Members
 	memepool = list()
 	gifpool = list()
@@ -35,6 +36,7 @@ class RoboMedia:
 	def __init__(self, corelogger):
 		self._Slogger = corelogger
 		self._loadmedia()
+
 
 
 
@@ -79,6 +81,7 @@ class RoboMedia:
 		self.memepool.append(join(self._MEMEDIR, fname))
 
 
+
 	"""
 		@loadmedia -  Abstraction wrapper to load all media
 
@@ -104,7 +107,7 @@ class RoboMedia:
 		""" 
 		self.memepool.clear()
 		self.memepool = [join(self._MEMEDIR, file) for file in listdir(self._MEMEDIR)]
-		if len(self.memepool) == 0:
+		if not self.memepool:
 					self._Slogger.error("no memes found!")
 
 		for m in self.memepool:
@@ -114,6 +117,7 @@ class RoboMedia:
 
 	"""
 		@loadgifs - Core loading function for gif media
+
 	"""
 	def _loadgifs(self):
 		"""
@@ -122,8 +126,29 @@ class RoboMedia:
 		""" 
 		self.gifpool.clear()
 		self.gifpool = [join(self._GIFDIR, file) for file in listdir(self._GIFDIR)]
-		if len(self.gifpool) == 0:
+		if not self.gifpool:
 					self._Slogger.error("no gifs found!")
 
 		for g in self.gifpool:
 			self._Slogger.info("Loaded gif %s" % g) 	
+
+
+
+
+	def listmemes(self):
+
+		if not self.memepool:
+			return None
+
+
+		return [path.split('/')[-1] for path in self.memepool]
+
+	
+
+	def listgifs(self):
+
+		if not self.gifpool:
+			return None
+
+
+		return [path.split('/')[-1] for path in self.gifpool]
