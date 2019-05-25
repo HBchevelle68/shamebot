@@ -20,6 +20,7 @@ import roboflame
 import roboutils
 from robomedia import RoboMedia
 from robostats import RoboStats
+from roboserver import RoboServer
 
 
 """
@@ -90,6 +91,7 @@ SHAMElogger.addHandler(consoleHandler)
 # Global robo* Objects
 Stats = None
 Media = None
+Server = None
 
 # Grab birthday
 starttime = time.localtime()
@@ -119,41 +121,25 @@ async def on_ready():
 	# Required for global write
 	global Stats
 	global Media
+	global Server
 
-	# Create global objects
+	# Create global stats object
 	Stats = RoboStats(SHAMElogger, roboutils.cmdlist)
-	Media = RoboMedia(SHAMElogger)
-
+	
+	# Verify stats setup correctly 
 	if len(Stats.cmdstats) == 0:
 		SHAMElogger.warning("RoboStats Failed...Continue? (Y/N)")
 		if input().lower() == 'n':
 			SHAMElogger.warning("Rest in pepes")
 			await bot.close()
 
+	# Create global media object 
+	Media = RoboMedia(SHAMElogger)
 
-	SHAMElogger.info("%s" % bot.guilds[0])
-
-
-	SHAMElogger.info(type(bot.guilds[0].text_channels))
-	SHAMElogger.info(type(bot.guilds[0].text_channels[0]))
-	for text in bot.guilds[0].text_channels:
-		Textchannelpool.append(text)
-		SHAMElogger.info("Text Channel:%s" % text)
-
-
-	for channel in bot.guilds[0].voice_channels:
-		global Voicechannelpool
-		SHAMElogger.info("Voice Channel:%s" % channel)
-		Voicechannelpool[channel.name] = list()
-		if len(channel.members) > 0:
-			for x in channel.members:
-				SHAMElogger.info("User in channel: %s" % x.name)
-				Voicechannelpool[channel.name].append(x.name)
-
-	for member in bot.get_all_members():
-		SHAMElogger.info(member)
-		SHAMElogger.info(type(member))
-		# Grab Users move into memberpool
+	Server = RoboServer(SHAMElogger,
+						bot.guilds[0].voice_channels,
+						bot.guilds[0].text_channels,
+						bot.get_all_members())
 
 
 	SHAMElogger.info('<< SUCCESSFUL LOGIN {0.user} >>'.format(bot))
@@ -197,28 +183,6 @@ async def gif(ctx):
 
 
 
-@bot.command(description=roboutils.CMD_BUGREPORT_DESC,
-			 help=roboutils.CMD_BUGREPORT_HELP)
-async def bugreport(ctx):
-	await ctx.send(roboutils.BUG)
-	Stats.logCommandUsage("$bugreport")
-
-
-
-@bot.command(description=roboutils.CMD_SHAMEME_DESC,
-			 help=roboutils.CMD_SHAMEME_HELP)
-async def shamemedaddy(ctx):
-	await ctx.send(roboflame.JT)
-	Stats.logCommandUsage("$shamemedaddy")
-
-
-
-@bot.command(description=roboutils.CMD_HELLO_DESC,
-			 help=roboutils.CMD_HELLO_HELP)
-async def hello(ctx):
-	await ctx.send("Hello %s!" % str(ctx.author).split('#')[0])
-	Stats.logCommandUsage("$hello")
-
 
 
 @bot.command(description=roboutils.CMD_ADDMEME_DESC,
@@ -239,6 +203,8 @@ async def addmeme(ctx):
 
 
 
+
+
 @bot.command(description=roboutils.CMD_ADDGIF_DESC,
 			 help=roboutils.CMD_ADDGIF_HELP)
 async def addgif(ctx):
@@ -256,11 +222,45 @@ async def addgif(ctx):
 
 
 
+
+
+@bot.command(description=roboutils.CMD_BUGREPORT_DESC,
+			 help=roboutils.CMD_BUGREPORT_HELP)
+async def bugreport(ctx):
+	await ctx.send(roboutils.BUG)
+	Stats.logCommandUsage("$bugreport")
+
+
+
+
+
+@bot.command(description=roboutils.CMD_SHAMEME_DESC,
+			 help=roboutils.CMD_SHAMEME_HELP)
+async def shamemedaddy(ctx):
+	await ctx.send(roboflame.JT)
+	Stats.logCommandUsage("$shamemedaddy")
+
+
+
+
+
+@bot.command(description=roboutils.CMD_HELLO_DESC,
+			 help=roboutils.CMD_HELLO_HELP)
+async def hello(ctx):
+	await ctx.send("Hello %s!" % str(ctx.author).split('#')[0])
+	Stats.logCommandUsage("$hello")
+
+
+
+
+
 @bot.command(description=roboutils.CMD_VERSION_DESC,
 			 help=roboutils.CMD_VERSION_HELP)
 async def version(ctx):
 	await ctx.send("I am currently on %s" % robotils.VERSION)
 	Stats.logCommandUsage("$version")
+
+
 
 
 
@@ -274,12 +274,39 @@ async def uptime(ctx):
 
 
 
+
+
 @bot.command(description=roboutils.CMD_FEATUREREQ_DESC,
 			 help=roboutils.CMD_FEATUREREQ_HELP)
 async def feature(ctx):
 	async with ctx.typing():
 		await ctx.send("%s" % roboutils.FEATURE)
 	Stats.logCommandUsage("$feature")
+
+
+
+
+"""
+
+	Events
+
+	Events are the actions or incidents we ask shame bot to 
+	trigger on and will always occur prior to commands. 
+
+	
+
+	Unlike commands, which are generally self explanitory and are 
+	inteded to be exposed mainly to the user, events are intended 
+	to be shamebot driven. This is because Users have no 
+	visability into events and nor should they. Events are for 
+	specialty cases where shamebot needs to execute specifc logic
+	due to a triggering "event" :)
+
+
+	Events should have full function documentation 
+
+"""
+
 
 
 
@@ -290,6 +317,7 @@ async def feature(ctx):
 @bot.event
 async def on_voice_state_update(member, before, after):
 
+	# Set some variables up to the info we need
 	if before.channel != None:
 		bchnl_name = before.channel.name
 	else:
@@ -299,17 +327,19 @@ async def on_voice_state_update(member, before, after):
 	else:
 		achnl_name  = None 
 
-	SHAMElogger.info(member.name)
-	ret = await roboutils.voice_change(SHAMElogger,
-						   	    	  (member.name, 
-						   	   	 	   bchnl_name,
-						   	   	 	   achnl_name ), 
-						   			   Voicechannelpool)
+	# Register change
+	ret = await Server.voice_change(member, bchnl_name, achnl_name) 
+						   			   
 
 	if ret != None:
-		async with Textchannelpool[0].typing():
-			await Textchannelpool[0].send("LOOOOL")
-			await Textchannelpool[0].send("%s and %s are gaaay bois" % (ret[0], ret[1]))
+		async with Server.textChannelPool[0].typing():
+			await Server.textChannelPool[0].send("LOOOOL")
+			await Server.textChannelPool[0].send("%s and %s are gaaay bois" % (ret[0], ret[1]))
+
+
+	# DEBUGGING
+	SHAMElogger.info("%s: %s -> %s" % (member.name, bchnl_name, achnl_name))
+
 
 
 
@@ -345,9 +375,11 @@ async def on_error(event_name, *args, **kwargs):
 """
 @bot.event
 async def on_disconnect():
+	global Stats
 	SHAMElogger.debug("<< DISCONNECTED >>")
-	Stats.statsToFile()
-
+	if Stats != None:
+		Stats.statsToFile()
+		Stats = None
 
 
 """
@@ -355,8 +387,10 @@ async def on_disconnect():
 """
 @bot.event
 async def on_resume():
+	global Stats
 	SHAMElogger.debug("<< RECONNECTED >>")
-
+	if Stats == None:
+		Stats = RoboStats(SHAMElogger, roboutils.cmdlist)
 
 
 if __name__ == "__main__":

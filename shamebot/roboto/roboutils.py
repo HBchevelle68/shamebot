@@ -74,27 +74,3 @@ async def calcuptime(Slogger, stime):
 	# Difference
 	return str(datetime.timedelta(seconds=currtime_epoch-stime_epoch)) 
 	
-
-
-async def voice_change(Slogger, mbr_tuple, chnl_pool):
-	mbr
-	before = mbr_tuple[1]
-	after  = mbr_tuple[2]
-
-	if before is None:
-		# Virgin join 
-		chnl_pool[after].append(mbr.name)
-		
-	else:
-		# Remove from old channel
-		chnl_pool[before].remove(mbr)
-		
-		# Add to new channel
-		chnl_pool[after].append(mbr)
-		
-
-	for chnl,plist in chnl_pool.items():
-		if len(plist) == 2:
-			return plist
-			
-	return None
