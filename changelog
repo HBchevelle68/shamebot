@@ -1,14 +1,10 @@
 - Shamebot v0.0.0
 
 Changes/Additions:
-- Added event documentation
-- RoboServer class 1.0 
+- Upgraded to discord API version 1.1.1 
+- on_disconnect no longer called when signal caught
+- statsToFile now called from main()
+
 
 Bug Fixes:
-- fixed in on_voice_state_update that would throw exception when leaving channel but
-not joining a new one
-- fixed bug in Server.voice_change that was adding in the discord.Member
-object instead of discord.Member.name
-- fixed bug in Server.voice_change that could allow for the same user to be
-added in the list twice
 

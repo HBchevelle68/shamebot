@@ -135,20 +135,44 @@ class RoboMedia:
 
 
 
-	def listmemes(self):
+	async def listmemes(self):
 
 		if not self.memepool:
-			return None
+			return 
 
+		mlist = [path.split('/')[-1] for path in self.memepool]
 
-		return [path.split('/')[-1] for path in self.memepool]
+		async with ctx.typing():
+			if mlist != None:
+				
+				await ctx.send("Here are the Memes you can choose from:")
+				msg = ""
+				for item in mlist:
+					
+					msg = msg + item + "\n"  
+				await ctx.send(msg)
+			
+			else:
+				await ctx.send("Sorry! Looks like my Meme Pool is empty :(")
 
 	
 
-	def listgifs(self):
+	async def listgifs(self, ctx):
 
 		if not self.gifpool:
-			return None
+			return
+		
+		glist = [path.split('/')[-1] for path in self.gifpool]
 
-
-		return [path.split('/')[-1] for path in self.gifpool]
+		async with ctx.typing():
+			if glist != None:
+				
+				await ctx.send("Here are the Gifs you can choose from:")
+				msg = ""
+				for item in glist:
+					
+					msg = msg + item + "\n" 
+				await ctx.send(msg)
+			
+			else:
+				await ctx.send("Sorry! Looks like my Gif Pool is empty :(")

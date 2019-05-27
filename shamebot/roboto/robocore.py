@@ -28,8 +28,13 @@ from roboserver import RoboServer
 """
 
 
+
 # set global Bot object
 bot = commands.Bot(command_prefix='$', case_insensitive=True)
+
+
+
+
 
 
 """ 
@@ -93,46 +98,39 @@ Stats = None
 Media = None
 Server = None
 
-# Grab birthday
+# Init birthday
 starttime = time.localtime()
 
-
-Voicechannelpool = dict()
-Textchannelpool = list()
-
-#Experimental 
-userpool = dict()
-
-
-
+MASTER = "HBchevelle68"
 
 """
 	**************** Begin shamebot **************** 
-"""
 
 
 
 
 
 
-
-"""
 	Command handlers
 
 	All commands follow this core layout. Each command is logged after
 	it has finished execution
 
 	
-	General design of commands is that kick off some form task for the
+	General design of commands is to kick off some form task for the
 	user. These tasks often will return some form of feedback to 
 	the user either in the form of media or text based response
 
 
-	Commands cannot be accessed interanlly, meaning, you cannot call a task
-	from within an event or Robo* class. However, nearly all functionality 
-	within commands are accessiable from outside the commands
+	Commands cannot be accessed interanlly, meaning, you cannot trigger
+	a task from within an event or Robo* class. However, nearly all 
+	functionality within commands are accessiable from outside 
+	the commands and if need can be accessed 
 
 """
+
+
+
 @bot.command(description=roboutils.CMD_PING_DESC,
 			 help=roboutils.CMD_PING_HELP)
 async def ping(ctx):
@@ -142,6 +140,7 @@ async def ping(ctx):
 		# Shame them
 		await ctx.send("Get off the village internet...")
 	Stats.logCommandUsage("$ping")
+
 
 
 
@@ -212,21 +211,8 @@ async def addgif(ctx):
 			 help=roboutils.CMD_LISTMEMES_HELP)
 async def listmemes(ctx):
 	
-	
-	mlist = Media.listmemes()
+	await Media.listmemes(ctx)
 
-	async with ctx.typing():
-		if mlist != None:
-			
-			await ctx.send("Here are the Memes you can choose from:")
-			msg = ""
-			for item in mlist:
-				
-				msg = msg + item + "\n"  
-			await ctx.send(msg)
-		
-		else:
-			await ctx.send("Sorry! Looks like my Meme Pool is empty :(")
 	Stats.logCommandUsage("$listmemes")
 
 
@@ -237,24 +223,9 @@ async def listmemes(ctx):
 			 help=roboutils.CMD_LISTGIFS_HELP)
 async def listgifs(ctx):
 	
+	await Media.listgifs(ctx)
 	
-	glist = Media.listgifs()
-
-	async with ctx.typing():
-		if glist != None:
-			
-			await ctx.send("Here are the Gifs you can choose from:")
-			msg = ""
-			for item in glist:
-				
-				msg = msg + item + "\n" 
-			await ctx.send(msg)
-		
-		else:
-			await ctx.send("Sorry! Looks like my Gif Pool is empty :(")
 	Stats.logCommandUsage("$listgifs")
-
-
 
 
 
@@ -273,7 +244,23 @@ async def bugreport(ctx):
 @bot.command(description=roboutils.CMD_SHAMEME_DESC,
 			 help=roboutils.CMD_SHAMEME_HELP)
 async def shamemedaddy(ctx):
-	await ctx.send(roboflame.JT)
+	
+	temp = [ctx.author.name]
+
+	async with ctx.typing():
+
+		# Make sure we haven't recently flamed 
+		if await Server.check_user_cooldown(temp):
+			
+			await ctx.send(roboflame.JT)
+			
+			# Set flame cooldown
+			await Server.init_user_cooldown(temp)
+
+		else:
+			
+			await ctx.send("But I already flamed that boi...")
+
 	Stats.logCommandUsage("$shamemedaddy")
 
 
@@ -322,6 +309,15 @@ async def feature(ctx):
 
 
 
+@bot.command(description=roboutils.CMD_FEATUREREQ_DESC,
+			 help=roboutils.CMD_FEATUREREQ_HELP)
+async def dev(ctx):
+	if ctx.author.name == MASTER: 
+		await bot.logout()
+	else:
+		async with ctx.typing():
+			await ctx.send("%s kys" % ctx.author.name)
+
 """
 
 	Events
@@ -339,7 +335,9 @@ async def feature(ctx):
 	due to a triggering "event" :)
 
 
-	Events should have full function documentation 
+	Events should have full function documentation where as commands
+	due to their design as being entry points into shamebot functionality
+	are not required to be fully documented 
 
 """
 
@@ -355,6 +353,7 @@ async def on_ready():
 	global Media
 	global Server
 
+	
 	# Create global stats object
 	Stats = RoboStats(SHAMElogger, roboutils.cmdlist)
 	
@@ -400,12 +399,15 @@ async def on_voice_state_update(member, before, after):
 	# Register change
 	ret = await Server.voice_change(member, bchnl_name, achnl_name) 
 						   			   
+	# Make sure we haven't recently flamed 
+	if ret != None and await Server.check_user_cooldown(ret):
 
-	if ret != None:
 		async with Server.textChannelPool[0].typing():
 			await Server.textChannelPool[0].send("LOOOOL")
 			await Server.textChannelPool[0].send("%s and %s are gaaay bois" % (ret[0], ret[1]))
 
+		# Set flame cooldown
+		await Server.init_user_cooldown(ret)
 
 	# DEBUGGING
 	SHAMElogger.info("%s: %s -> %s" % (member.name, bchnl_name, achnl_name))
@@ -421,15 +423,26 @@ async def on_voice_state_update(member, before, after):
 @bot.event
 async def on_message(message):
 	# Shamebot doesn't need to respond to itself :) 
-	if message.author == bot.user:
-		return
-
-	# Hand off to command handler
-	await bot.process_commands(message)
-
+	if message.author != bot.user:
+		# Hand off to command handler
+		await bot.process_commands(message)
 
 	
 
+
+	
+@bot.event
+async def on_guild_channel_create(channel):
+	SHAMElogger.info("New channel created")
+
+	await Server.new_channel(channel)
+
+
+@bot.event
+async def on_guild_channel_delete(channel):
+	SHAMElogger.info("Channel delete")
+
+	await Server.del_channel(channel)
 
 """
 	@on_error() - Called when unhandled exception occurs 
@@ -446,15 +459,12 @@ async def on_error(event_name, *args, **kwargs):
 
 
 """
-	@on_disconnect() - Called on network disconnect, interrupt, etc 
+	@on_disconnect() - Called on network disconnect 
 """
 @bot.event
 async def on_disconnect():
-	global Stats
-	SHAMElogger.debug("<< DISCONNECTED >>")
-	if Stats != None:
-		Stats.statsToFile()
-		Stats = None
+	SHAMElogger.warning("<< DISCONNECTED >>")
+
 
 
 
@@ -465,14 +475,24 @@ async def on_disconnect():
 @bot.event
 async def on_resume():
 	global Stats
-	SHAMElogger.debug("<< RECONNECTED >>")
+	SHAMElogger.warning("<< RECONNECTED >>")
 	if Stats == None:
 		Stats = RoboStats(SHAMElogger, roboutils.cmdlist)
 
 
 
 
-
-
 if __name__ == "__main__":
+
+		
 	bot.run(str(argv[1]))
+
+	SHAMElogger.warning("<< IM DYING LOLOLOL >>")
+	if Stats != None:
+		Stats.statsToFile()
+		
+
+
+	
+
+	
