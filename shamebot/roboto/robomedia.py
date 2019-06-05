@@ -135,7 +135,7 @@ class RoboMedia:
 
 
 
-	async def listmemes(self):
+	async def listmemes(self, ctx):
 
 		if not self.memepool:
 			return 
