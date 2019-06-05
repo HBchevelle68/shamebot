@@ -404,7 +404,7 @@ async def on_voice_state_update(member, before, after):
 
 		async with Server.textChannelPool[0].typing():
 			await Server.textChannelPool[0].send("BOIS")
-                        await Server.textChannelPool[0].send("%s and %s are about to YeeeeEEEEEeeeeeEEEEEeeEEeEEEeeet" % (ret[0], ret[1]))
+			await Server.textChannelPool[0].send("%s and %s are about to YeeeeEEEEEeeeeeEEEEEeeEEeEEEeeet" % (ret[0], ret[1]))
 
 		# Set flame cooldown
 		await Server.init_user_cooldown(ret)

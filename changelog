@@ -4,7 +4,11 @@ Changes/Additions:
 - Upgraded to discord API version 1.1.1 
 - on_disconnect no longer called when signal caught
 - statsToFile now called from main()
+- Added devloper only command for use during active dev
+- Added live Channel additions for both text and voice channels
+- Added live Channel deletions for both text and voice channels
+- Added cooldown timers and tracking for users when they get shamed/flamed
 
 
 Bug Fixes:
-
+- Fixed teardown bug caused by upgrade to discord API version 1.1.1
