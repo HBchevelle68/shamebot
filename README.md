@@ -7,7 +7,7 @@ for shame
   - [ ] Bot/OW lib integration (Tom/Chivel)
   - [X] Bot basic interaction (Chivel)
   - [X] OW 100% test pass rate (Chivel/Tom)
-  - [ ] Deployment env set up (deployment not neccessary but should be at least pass functional testing (Chris) 
+  - [X] Deployment env set up (deployment not neccessary but should be at least pass functional testing (Chris) 
   - [ ] Code Tags (Chivel)
   - [ ] Code Review?
 

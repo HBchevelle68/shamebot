@@ -1,11 +1,14 @@
-- Shamebot v0.0.69
+- Shamebot v0.0.0
 
 Changes/Additions:
-- If RoboStats fails; asks the admin if life should continue
-- Added chennel pool, for use later in shame
-- Added uptime command for retrieving bot uptime 
-- Removed conditional in on_message that was no longer needed
+- Upgraded to discord API version 1.1.1 
+- on_disconnect no longer called when signal caught
+- statsToFile now called from main()
+- Added devloper only command for use during active dev
+- Added live Channel additions for both text and voice channels
+- Added live Channel deletions for both text and voice channels
+- Added cooldown timers and tracking for users when they get shamed/flamed
+
 
 Bug Fixes:
-- fixed bug that allowed a RoboStats object to be none and shamebot attempted to access it
-- fixed bug when RoboStats init failed statsToFile() would still attempt to write to file
+- Fixed teardown bug caused by upgrade to discord API version 1.1.1
