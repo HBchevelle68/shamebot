@@ -10,6 +10,7 @@ import logging
 import traceback
 import time
 import random
+import asyncio
 from sys import argv 
 from os.path import abspath, join, dirname
 from logging.handlers import RotatingFileHandler
@@ -318,6 +319,25 @@ async def dev(ctx):
 		async with ctx.typing():
 			await ctx.send("%s kys" % ctx.author.name)
 
+
+@bot.command(description="sound",
+			 help="sound")
+async def sound(ctx):
+	# grab the user who sent the command
+	author = ctx.message.author
+	channel = author.voice.channel
+	if channel != None:
+		# create StreamPlayer
+		vc = await channel.connect()
+		vc.play(discord.FFmpegPCMAudio(random.choice(Media.audiopool)), after=lambda: print('done'))
+
+		while vc.is_playing():
+		    await asyncio.sleep(1)
+		# disconnect after the player has finished
+		vc.stop()
+		await vc.disconnect()
+
+
 """
 
 	Events
@@ -385,32 +405,34 @@ async def on_ready():
 """
 @bot.event
 async def on_voice_state_update(member, before, after):
+	if member.name != "shamebot":
+		# Set some variables up to the info we need
+		if before.channel != None:
+			bchnl_name = before.channel.name
+		else:
+			bchnl_name = None
+		if after.channel != None:
+			achnl_name = after.channel.name
+			await Media.play_rand_audio(after.channel)
+		else:
+			achnl_name  = None 
 
-	# Set some variables up to the info we need
-	if before.channel != None:
-		bchnl_name = before.channel.name
-	else:
-		bchnl_name = None
-	if after.channel != None:
-		achnl_name = after.channel.name
-	else:
-		achnl_name  = None 
+		# Register change
+		ret = await Server.voice_change(member, bchnl_name, achnl_name) 
+		
 
-	# Register change
-	ret = await Server.voice_change(member, bchnl_name, achnl_name) 
-						   			   
-	# Make sure we haven't recently flamed 
-	if ret != None and await Server.check_user_cooldown(ret):
+		# Make sure we haven't recently flamed 
+		if ret != None and await Server.check_user_cooldown(ret):
 
-		async with Server.textChannelPool[0].typing():
-			await Server.textChannelPool[0].send("BOIS")
-			await Server.textChannelPool[0].send("%s and %s are about to YeeeeEEEEEeeeeeEEEEEeeEEeEEEeeet" % (ret[0], ret[1]))
+			async with Server.textChannelPool[0].typing():
+				await Server.textChannelPool[0].send("BOIS")
+				await Server.textChannelPool[0].send("%s and %s are about to YeeeeEEEEEeeeeeEEEEEeeEEeEEEeeet" % (ret[0], ret[1]))
 
-		# Set flame cooldown
-		await Server.init_user_cooldown(ret)
+			# Set flame cooldown
+			await Server.init_user_cooldown(ret)
 
-	# DEBUGGING
-	SHAMElogger.info("%s: %s -> %s" % (member.name, bchnl_name, achnl_name))
+		# DEBUGGING
+		SHAMElogger.info("%s: %s -> %s" % (member.name, bchnl_name, achnl_name))
 
 
 

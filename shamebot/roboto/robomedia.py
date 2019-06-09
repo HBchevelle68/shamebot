@@ -1,9 +1,12 @@
 # Discord API imports
+import discord
 from discord import Attachment
 from discord.ext.commands import Context
 
 # Standard python imports
+import random
 import logging
+import asyncio
 from os import listdir, walk
 from os.path import abspath, join, dirname 
 
@@ -19,14 +22,15 @@ from os.path import abspath, join, dirname
 class RoboMedia:
 
 	# Public Members
-	memepool = list()
-	gifpool = list()
+	memepool  = list()
+	gifpool   = list()
+	audiopool = list()
 	
 	# Pseudo Private Members
-	_Slogger = None
-	_MEMEDIR = abspath(join(dirname(__name__),"images/memes/"))
-	_GIFDIR  = abspath(join(dirname(__name__),"images/gifs/"))
-
+	_Slogger  = None
+	_MEMEDIR  = abspath(join(dirname(__name__),"images/memes/"))
+	_GIFDIR   = abspath(join(dirname(__name__),"images/gifs/"))
+	_AUDIODIR = abspath(join(dirname(__name__),"audio/"))
 	
 
 	""" PUBLIC
@@ -94,6 +98,8 @@ class RoboMedia:
 		# Populate gifpool from disk
 		self._loadgifs()
 
+		# Populate audiopool from disk
+		self._loadaudio()		
 
 
 	"""
@@ -121,7 +127,7 @@ class RoboMedia:
 	"""
 	def _loadgifs(self):
 		"""
-			Populate mempool from disk
+			Populate gifpool from disk
 			Make sure its been cleared
 		""" 
 		self.gifpool.clear()
@@ -131,6 +137,23 @@ class RoboMedia:
 
 		for g in self.gifpool:
 			self._Slogger.info("Loaded gif %s" % g) 	
+
+
+
+
+	def _loadaudio(self):
+		"""
+			Populate audiopool from disk
+			Make sure its been cleared
+		"""
+		self.audiopool.clear()
+		self.audiopool = [join(self._AUDIODIR, file) for file in listdir(self._AUDIODIR)]
+		if not self.audiopool:
+					self._Slogger.error("no audio files found!")
+
+		for mp3 in self.audiopool:
+			self._Slogger.info("Loaded audio file %s" % mp3) 
+
 
 
 
@@ -176,3 +199,18 @@ class RoboMedia:
 			
 			else:
 				await ctx.send("Sorry! Looks like my Gif Pool is empty :(")
+
+
+	async def play_rand_audio(self, channel):
+		# grab the user who sent the command
+
+		if channel != None:
+			
+			vc = await channel.connect()
+			vc.play(discord.FFmpegPCMAudio(random.choice(self.audiopool)), after=lambda: print('done'))
+
+			while vc.is_playing():
+				await asyncio.sleep(1)
+			# disconnect after the player has finished
+			vc.stop()
+			await vc.disconnect()
