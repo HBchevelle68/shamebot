@@ -178,7 +178,7 @@ async def addmeme(ctx):
 			await Media.savememe(ctx)
 
 			# Provide feedback
-			await ctx.send("%s has been added to my pool! Thanks! :)" %
+			await ctx.send("%s has been added to my meme pool! Thanks! :)" %
 				   ctx.message.attachments[0].filename)
 
 			Stats.logCommandUsage("$addmeme")
@@ -198,14 +198,27 @@ async def addgif(ctx):
 			await Media.savegif(ctx)
 
 			# Provide feedback
-			await ctx.send("%s has been added to my pool! Thanks! :)" %
+			await ctx.send("%s has been added to my gif pool! Thanks! :)" %
 						   ctx.message.attachments[0].filename)
 			Stats.logCommandUsage("$addgif")
 		else:
 			await ctx.send("I can't find an attachment or you passed too many :(")
 
 
+@bot.command(description=roboutils.CMD_ADDGIF_DESC,
+			 help=roboutils.CMD_ADDGIF_HELP)
+async def addaudio(ctx):
+	async with ctx.typing():
+		if len(ctx.message.attachments) == 1:
+			# Pass context to be saved
+			await Media.saveaudio(ctx)
 
+			# Provide feedback
+			await ctx.send("%s has been added to my audio pool! Thanks! :)" %
+						   ctx.message.attachments[0].filename)
+			Stats.logCommandUsage("$addgif")
+		else:
+			await ctx.send("I can't find an attachment or you passed too many :(")
 
 
 @bot.command(description=roboutils.CMD_LISTMEMES_DESC,
@@ -235,7 +248,9 @@ async def listgifs(ctx):
 @bot.command(description=roboutils.CMD_BUGREPORT_DESC,
 			 help=roboutils.CMD_BUGREPORT_HELP)
 async def bugreport(ctx):
+
 	await ctx.send(roboutils.BUG)
+
 	Stats.logCommandUsage("$bugreport")
 
 
@@ -271,7 +286,9 @@ async def shamemedaddy(ctx):
 @bot.command(description=roboutils.CMD_HELLO_DESC,
 			 help=roboutils.CMD_HELLO_HELP)
 async def hello(ctx):
+
 	await ctx.send("Hello %s!" % str(ctx.author).split('#')[0])
+
 	Stats.logCommandUsage("$hello")
 
 
@@ -281,7 +298,9 @@ async def hello(ctx):
 @bot.command(description=roboutils.CMD_VERSION_DESC,
 			 help=roboutils.CMD_VERSION_HELP)
 async def version(ctx):
+
 	await ctx.send("I am currently on %s" % roboutils.VERSION)
+
 	Stats.logCommandUsage("$version")
 
 
@@ -291,9 +310,12 @@ async def version(ctx):
 @bot.command(description=roboutils.CMD_UPTIME_DESC,
 			 help=roboutils.CMD_UPTIME_HELP)
 async def uptime(ctx):
+
 	async with ctx.typing():
+
 		uptime = await roboutils.calcuptime(SHAMElogger, starttime)
 		await ctx.send("%s" % uptime)
+
 	Stats.logCommandUsage("$uptime")
 
 
@@ -303,8 +325,10 @@ async def uptime(ctx):
 @bot.command(description=roboutils.CMD_FEATUREREQ_DESC,
 			 help=roboutils.CMD_FEATUREREQ_HELP)
 async def feature(ctx):
+
 	async with ctx.typing():
 		await ctx.send("%s" % roboutils.FEATURE)
+
 	Stats.logCommandUsage("$feature")
 
 
@@ -313,16 +337,18 @@ async def feature(ctx):
 @bot.command(description=roboutils.CMD_FEATUREREQ_DESC,
 			 help=roboutils.CMD_FEATUREREQ_HELP)
 async def dev(ctx):
+
 	if ctx.author.name == MASTER: 
 		await bot.logout()
+
 	else:
 		async with ctx.typing():
 			await ctx.send("%s kys" % ctx.author.name)
 
 
-@bot.command(description="sound",
-			 help="sound")
-async def sound(ctx):
+@bot.command(description=roboutils.CMD_VOICE_DESC,
+			 help=roboutils.CMD_VOICE_HELP)
+async def voice(ctx):
 	# grab the user who sent the command
 	author = ctx.message.author
 	channel = author.voice.channel
@@ -337,6 +363,7 @@ async def sound(ctx):
 		vc.stop()
 		await vc.disconnect()
 
+	Stats.logCommandUsage("$voice")
 
 """
 

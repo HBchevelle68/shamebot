@@ -82,7 +82,28 @@ class RoboMedia:
 
 
 		# Append new file to pool in order to incorporate new image 
-		self.memepool.append(join(self._MEMEDIR, fname))
+		self.memepool.append(join(self._GIFDIR, fname))
+
+
+
+	""" PUBLIC
+		@savegif - wrapper to save a gif submitted to shaebot
+
+	"""
+	async def saveaudio(self, ctx):
+		self._Slogger.info("Found file attached: %s" % ctx.message.attachments)
+
+		# Grab the first Attachment object's file name
+		atch = ctx.message.attachments[0]
+		fname = atch.filename
+
+		# Save file to disk 
+		byteswritten = await atch.save(join(self._AUDIODIR, fname), use_cached=True)
+		self._Slogger.info("saved %s:%d bytes in %s" % (fname, byteswritten, self._AUDIODIR))
+
+
+		# Append new file to pool in order to incorporate new image 
+		self.memepool.append(join(self._AUDIODIR, fname))
 
 
 

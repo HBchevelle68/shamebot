@@ -147,7 +147,6 @@ class RoboServer():
 
 		items in list must be discord.member.Member.name (str)
 	"""
-
 	async def init_user_cooldown(self, user_list):
 		
 		for u in user_list:
