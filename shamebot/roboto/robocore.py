@@ -352,16 +352,8 @@ async def voice(ctx):
 	# grab the user who sent the command
 	author = ctx.message.author
 	channel = author.voice.channel
-	if channel != None:
-		# create StreamPlayer
-		vc = await channel.connect()
-		vc.play(discord.FFmpegPCMAudio(random.choice(Media.audiopool)), after=lambda: print('done'))
-
-		while vc.is_playing():
-		    await asyncio.sleep(1)
-		# disconnect after the player has finished
-		vc.stop()
-		await vc.disconnect()
+	
+	await Media.play_rand_audio(channel)
 
 	Stats.logCommandUsage("$voice")
 

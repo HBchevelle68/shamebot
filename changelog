@@ -1,14 +1,10 @@
 - Shamebot v0.0.0
 
 Changes/Additions:
-- Upgraded to discord API version 1.1.1 
-- on_disconnect no longer called when signal caught
-- statsToFile now called from main()
-- Added devloper only command for use during active dev
-- Added live Channel additions for both text and voice channels
-- Added live Channel deletions for both text and voice channels
-- Added cooldown timers and tracking for users when they get shamed/flamed
-
+- Upgraded to discord API version 1.2.1 
+- Added the ability for chamebot to join a channel and play a audio file
+- Added command to add audio to audio pool
 
 Bug Fixes:
-- Fixed teardown bug caused by upgrade to discord API version 1.1.1
+- Fixed bug in addgif that would cause the file to be stored in the gif folder
+but the path was appended to the mempool

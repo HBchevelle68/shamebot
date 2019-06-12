@@ -227,9 +227,12 @@ class RoboMedia:
 
 		if channel != None:
 			
+			# create StreamPlayer
 			vc = await channel.connect()
-			vc.play(discord.FFmpegPCMAudio(random.choice(self.audiopool)), after=lambda: print('done'))
-
+			vc.play(discord.FFmpegPCMAudio(random.choice(self.audiopool)))
+			# reduce volume
+			vc.source = discord.PCMVolumeTransformer(vc.source)
+			vc.source.volume = 0.2
 			while vc.is_playing():
 				await asyncio.sleep(1)
 			# disconnect after the player has finished
