@@ -357,7 +357,7 @@ async def voice(ctx):
 	author = ctx.message.author
 	channel = author.voice.channel
 	
-	await Media.play_rand_audio(channel)
+	await Media.play_rand_audio(Stats, channel)
 
 	Stats.logCommandUsage("$voice")
 
