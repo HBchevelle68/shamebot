@@ -232,7 +232,7 @@ class RoboMedia:
 			f = random.choice(self.audiopool)
 			Stats.logAudioUsage(f.split('/')[-1])
 
-			vc.play(discord.FFmpegPCMAudio(random.choice(self.audiopool)))
+			vc.play(discord.FFmpegPCMAudio(f))
 			# reduce volume
 			vc.source = discord.PCMVolumeTransformer(vc.source)
 			vc.source.volume = 0.2
