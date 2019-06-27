@@ -151,7 +151,9 @@ async def ping(ctx):
 			 help=roboutils.CMD_MEME_HELP)
 async def meme(ctx):
 	async with ctx.typing():
-		await ctx.send("", file=discord.File(random.choice(Media.memepool)))
+		f = random.choice(Media.memepool)
+		await ctx.send("", file=discord.File(f))
+	Stats.logMemeUsage(f.split('/')[-1])
 	Stats.logCommandUsage("$meme")
 
 
@@ -162,7 +164,9 @@ async def meme(ctx):
 			 help=roboutils.CMD_GIF_HELP)
 async def gif(ctx):
 	async with ctx.typing():
-		await ctx.send("", file=discord.File(random.choice(Media.gifpool)))
+		f = random.choice(Media.gifpool)
+		await ctx.send("", file=discord.File(f))
+	Stats.logGifUsage(f.split('/')[-1])
 	Stats.logCommandUsage("$gif")
 
 
@@ -357,6 +361,13 @@ async def voice(ctx):
 
 	Stats.logCommandUsage("$voice")
 
+
+@bot.command(description=roboutils.CMD_STATS_DESC,
+			 help=roboutils.CMD_STATS_HELP)
+async def stats(ctx):
+	await Stats.displayStats(ctx)
+	Stats.logCommandUsage("$stats")
+
 """
 
 	Events
@@ -392,17 +403,6 @@ async def on_ready():
 	global Media
 	global Server
 
-	
-	# Create global stats object
-	Stats = RoboStats(SHAMElogger, roboutils.cmdlist)
-	
-	# Verify stats setup correctly 
-	if len(Stats.cmdstats) == 0:
-		SHAMElogger.warning("RoboStats Failed...Continue? (Y/N)")
-		if input().lower() == 'n':
-			SHAMElogger.warning("Rest in pepes")
-			await bot.close()
-
 	# Create global media object 
 	Media = RoboMedia(SHAMElogger)
 
@@ -410,6 +410,23 @@ async def on_ready():
 						bot.guilds[0].voice_channels,
 						bot.guilds[0].text_channels,
 						bot.get_all_members())
+
+	tempdict = {
+		"audio": [x.split('/')[-1] for x in Media.audiopool],
+		"meme": [x.split('/')[-1] for x in Media.memepool],
+		"gif": [x.split('/')[-1] for x in Media.gifpool]
+	}
+
+
+	# Create global stats object
+	Stats = RoboStats(SHAMElogger, roboutils.cmdlist, tempdict)
+	
+	# Verify stats setup correctly 
+	if len(Stats.cmdstats) == 0:
+		SHAMElogger.warning("RoboStats Failed...Continue? (Y/N)")
+		if input().lower() == 'n':
+			SHAMElogger.warning("Rest in pepes")
+			await bot.close()
 
 
 	SHAMElogger.info('<< SUCCESSFUL LOGIN {0.user} >>'.format(bot))

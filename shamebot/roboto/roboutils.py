@@ -15,7 +15,7 @@ import logging
 """
 
 cmdlist = ["$addgif", "$addmeme", "$addaudio", "$bugreport", "$feature", "$gif", "$hello",
-		   "$listmemes", "$listgifs", "$meme", "$ping", "$shamemedaddy", "$uptime",
+		   "$listmemes", "$listgifs", "$meme", "$ping", "$shamemedaddy", "$stats", "$uptime",
 		   "$version", "$voice"]
 
 CMD_ADDGIF_HELP     = "Submit gif to gif-pool"
@@ -29,6 +29,7 @@ CMD_LISTGIFS_HELP   = "List gifs"
 CMD_MEME_HELP       = "Random meme"
 CMD_PING_HELP       = "How fast are the bits"
 CMD_SHAMEME_HELP    = "Hardcoded shame...for now"
+CMD_STATS_HELP      = "Get Stats"
 CMD_UPTIME_HELP     = "Get uptime"
 CMD_VERSION_HELP    = "Current version"
 CMD_VOICE_HELP		= "Have shamebot say something"
@@ -44,6 +45,7 @@ CMD_LISTGIFS_DESC   = "Get a list of available gifs for you to pick from"
 CMD_MEME_DESC       = "Get random meme from my pool of memes"
 CMD_PING_DESC       = "Returns latency"
 CMD_SHAMEME_DESC    = "Get a hardcoded shame....for now"
+CMD_STATS_DESC      = "Get Stats"
 CMD_UPTIME_DESC	    = "Returns uptime of shamebot in the format [D day[s], ][H]H:MM:SS[.UUUUUU]"
 CMD_VERSION_DESC    = "Current version"
 CMD_VOICE_DESC		= "Shamebot will pick a random voice line and then grace you with its presence"

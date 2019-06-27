@@ -9,8 +9,8 @@ import logging
 import asyncio
 from os import listdir, walk
 from os.path import abspath, join, dirname 
-
-
+ 
+from robostats import RoboStats
 
 
 
@@ -222,13 +222,16 @@ class RoboMedia:
 				await ctx.send("Sorry! Looks like my Gif Pool is empty :(")
 
 
-	async def play_rand_audio(self, channel):
+	async def play_rand_audio(self, Stats, channel):
 		# grab the user who sent the command
 
 		if channel != None:
 			
 			# create StreamPlayer
 			vc = await channel.connect()
+			f = random.choice(self.audiopool)
+			Stats.logAudioUsage(f.split('/')[-1])
+
 			vc.play(discord.FFmpegPCMAudio(random.choice(self.audiopool)))
 			# reduce volume
 			vc.source = discord.PCMVolumeTransformer(vc.source)

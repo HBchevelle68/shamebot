@@ -1,3 +1,8 @@
+# Discord API imports
+import discord
+from discord import Attachment
+from discord.ext.commands import Context
+
 # standard python imports
 import logging
 import os
@@ -11,11 +16,14 @@ class RoboStats:
 	statsfile = os.path.join(os.path.abspath(os.path.dirname(__name__)), "logs/shamebotStats")
 	cmdcount = None 
 	cmdstats = dict()
+	audiostats = dict()
+	memestats = dict()
+	gifstats = dict()
 
 	# Pseudo Private Members
 	_Slogger = None
 
-	def __init__(self, corelogger, cmdlist):
+	def __init__(self, corelogger, cmdlist, mediadict):
 
 		# Grab ptr
 		self._Slogger = corelogger
@@ -33,6 +41,71 @@ class RoboStats:
 				self.cmdstats[str(item)] = 0
 
 		self._Slogger.info("Write all stats to: %s" % (self.statsfile))
+
+		self._initMediaStats(mediadict)
+
+	def _initMediaStats(self, mediadict):
+		tempAudioList = mediadict["audio"]
+		tempMemeList = mediadict["meme"]
+		tempGifList = mediadict["gif"]
+
+		for item in tempAudioList:
+			self._Slogger.info("Setting audio usage stat for %s to 0" % item)
+			self.audiostats[str(item)] = 0
+			
+
+		for item in tempMemeList:
+			self._Slogger.info("Setting meme usage stat for %s to 0" % item)
+			self.memestats[str(item)] = 0
+		
+
+		for item in tempGifList:
+			self._Slogger.info("Setting gif usage stat for %s to 0" % item)
+			self.gifstats[str(item)] = 0
+	
+
+
+
+
+	def logAudioUsage(self, fileused):
+		
+		if fileused in self.audiostats:
+			self.audiostats[fileused] += 1 
+			self._Slogger.info("Gave %s" % fileused)
+
+	def logMemeUsage(self, fileused):
+		
+		if fileused in self.memestats:
+			self.memestats[fileused] += 1 
+			self._Slogger.info("Gave %s" % fileused)
+
+	def logGifUsage(self, fileused):
+		
+		if fileused in self.gifstats:
+			self.gifstats[fileused] += 1 
+			self._Slogger.info("Gave %s" % fileused)
+
+	async def displayStats(self, ctx):
+
+		async with ctx.typing():
+			if self.audiostats.items() != None:
+				
+				await ctx.send("All Stats:")
+				msg = ""
+				for item, num in self.audiostats.items():
+					msg = msg + item + " = " + str(num) + "\n"
+
+				msg = msg + "\n\n"
+				for item, num in self.memestats.items():
+					msg = msg + item + " = " + str(num) + "\n"
+				
+				msg = msg + "\n\n"
+				for item, num in self.gifstats.items():
+					msg = msg + item + " = " + str(num) + "\n"
+				await ctx.send(msg)
+			
+			else:
+				await ctx.send("INCREASE MASS AND BLOW THE ASS I HAVE NO STATS!")
 
 
 	"""
