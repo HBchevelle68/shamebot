@@ -449,7 +449,7 @@ async def on_voice_state_update(member, before, after):
 			bchnl_name = None
 		if after.channel != None:
 			achnl_name = after.channel.name
-			await Media.play_rand_audio(after.channel)
+			await Media.play_rand_audio(Stats, after.channel)
 		else:
 			achnl_name  = None 
 
