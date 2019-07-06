@@ -12,3 +12,5 @@ fi
 pushd shamebot/roboto/
 python3.7 robocore.py $(cat $TKNFILE)
 popd
+printf "Shamebot...beep bap boop"
+
