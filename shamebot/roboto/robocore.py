@@ -427,7 +427,8 @@ async def on_message(message):
 		# Hand off to command handler
 		await bot.process_commands(message)
 
-	
+	else:
+          SHAMElogger.debug("User %s" % message.author)
 
 
 	
