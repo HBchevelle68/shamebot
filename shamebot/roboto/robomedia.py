@@ -8,7 +8,7 @@ import random
 import logging
 import asyncio
 from os import listdir, walk
-from os.path import abspath, join, dirname 
+from os.path import abspath, join, dirname, exists 
  
 from robostats import RoboStats
 
@@ -55,6 +55,11 @@ class RoboMedia:
 		atch = ctx.message.attachments[0]
 		fname = atch.filename
 
+		while exists(join(self,_GIFDIR, fname)):
+			fname_pieces = fname.split('.')
+			fname_pieces[0] = fname_pieces[0] + str(random.randint(0,9999999))
+			fname = fname_pieces[0] + '.' + fname_pieces[1]
+
 		# Save file to disk 
 		byteswritten = await atch.save(join(self._MEMEDIR, fname), use_cached=True)
 		self._Slogger.info("saved %s:%d bytes in %s" % (fname, byteswritten, self._MEMEDIR))
@@ -76,13 +81,19 @@ class RoboMedia:
 		atch = ctx.message.attachments[0]
 		fname = atch.filename
 
+        while exists(join(self,_GIFDIR, fname)):
+			fname_pieces = fname.split('.')
+			fname_pieces[0] = fname_pieces[0] + str(random.randint(0,9999999))
+			fname = fname_pieces[0] + '.' + fname_pieces[1]
+
+                
 		# Save file to disk 
 		byteswritten = await atch.save(join(self._GIFDIR, fname), use_cached=True)
 		self._Slogger.info("saved %s:%d bytes in %s" % (fname, byteswritten, self._GIFDIR))
 
 
 		# Append new file to pool in order to incorporate new image 
-		self.memepool.append(join(self._GIFDIR, fname))
+		self.gifpool.append(join(self._GIFDIR, fname))
 
 
 
@@ -97,13 +108,18 @@ class RoboMedia:
 		atch = ctx.message.attachments[0]
 		fname = atch.filename
 
+        while exists(join(self,_GIFDIR, fname)):
+			fname_pieces = fname.split('.')
+			fname_pieces[0] = fname_pieces[0] + str(random.randint(0,9999999))
+			fname = fname_pieces[0] + '.' + fname_pieces[1]
+
 		# Save file to disk 
 		byteswritten = await atch.save(join(self._AUDIODIR, fname), use_cached=True)
 		self._Slogger.info("saved %s:%d bytes in %s" % (fname, byteswritten, self._AUDIODIR))
 
 
 		# Append new file to pool in order to incorporate new image 
-		self.memepool.append(join(self._AUDIODIR, fname))
+		self.audiopool.append(join(self._AUDIODIR, fname))
 
 
 
