@@ -55,7 +55,7 @@ class RoboMedia:
 		atch = ctx.message.attachments[0]
 		fname = atch.filename
 
-		while exists(join(self,_GIFDIR, fname)):
+		while exists(join(self._MEMEDIR, fname)):
 			fname_pieces = fname.split('.')
 			fname_pieces[0] = fname_pieces[0] + str(random.randint(0,9999999))
 			fname = fname_pieces[0] + '.' + fname_pieces[1]
@@ -66,6 +66,9 @@ class RoboMedia:
 
 		# Append new file to pool in order to incorporate new image 
 		self.memepool.append(join(self._MEMEDIR, fname))
+
+				# Provide feedback
+		await ctx.send("%s has been added to my meme pool! Thanks! :)" % fname)
 
 		
 
@@ -81,11 +84,10 @@ class RoboMedia:
 		atch = ctx.message.attachments[0]
 		fname = atch.filename
 
-        while exists(join(self,_GIFDIR, fname)):
+		while exists(join(self._GIFDIR, fname)):
 			fname_pieces = fname.split('.')
 			fname_pieces[0] = fname_pieces[0] + str(random.randint(0,9999999))
 			fname = fname_pieces[0] + '.' + fname_pieces[1]
-
                 
 		# Save file to disk 
 		byteswritten = await atch.save(join(self._GIFDIR, fname), use_cached=True)
@@ -94,6 +96,11 @@ class RoboMedia:
 
 		# Append new file to pool in order to incorporate new image 
 		self.gifpool.append(join(self._GIFDIR, fname))
+
+		# Provide feedback
+		await ctx.send("%s has been added to my gif pool! Thanks! :)" % fname)
+
+
 
 
 
@@ -108,7 +115,7 @@ class RoboMedia:
 		atch = ctx.message.attachments[0]
 		fname = atch.filename
 
-        while exists(join(self,_GIFDIR, fname)):
+		while exists(join(self._AUDIODIR, fname)):
 			fname_pieces = fname.split('.')
 			fname_pieces[0] = fname_pieces[0] + str(random.randint(0,9999999))
 			fname = fname_pieces[0] + '.' + fname_pieces[1]
@@ -120,7 +127,8 @@ class RoboMedia:
 
 		# Append new file to pool in order to incorporate new image 
 		self.audiopool.append(join(self._AUDIODIR, fname))
-
+		# Provide feedback
+		await ctx.send("%s has been added to my audio pool! Thanks! :)" % fname)
 
 
 	"""

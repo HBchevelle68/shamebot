@@ -181,10 +181,6 @@ async def addmeme(ctx):
 			# Pass context to be saved
 			await Media.savememe(ctx)
 
-			# Provide feedback
-			await ctx.send("%s has been added to my meme pool! Thanks! :)" %
-				   ctx.message.attachments[0].filename)
-
 			Stats.logCommandUsage("$addmeme")
 		else:
 			await ctx.send("I can't find an attachment or you passed too many :(")
@@ -201,9 +197,6 @@ async def addgif(ctx):
 			# Pass context to be saved
 			await Media.savegif(ctx)
 
-			# Provide feedback
-			await ctx.send("%s has been added to my gif pool! Thanks! :)" %
-						   ctx.message.attachments[0].filename)
 			Stats.logCommandUsage("$addgif")
 		else:
 			await ctx.send("I can't find an attachment or you passed too many :(")
@@ -217,9 +210,6 @@ async def addaudio(ctx):
 			# Pass context to be saved
 			await Media.saveaudio(ctx)
 
-			# Provide feedback
-			await ctx.send("%s has been added to my audio pool! Thanks! :)" %
-						   ctx.message.attachments[0].filename)
 			Stats.logCommandUsage("$addgif")
 		else:
 			await ctx.send("I can't find an attachment or you passed too many :(")
